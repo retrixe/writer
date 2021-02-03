@@ -1,0 +1,42 @@
+{
+  "name": "writer",
+  "version": "1.0.0-alpha.0",
+  "description": "The HTML/CSS/JS component of writer.",
+  "main": "index.js",
+  "repository": "https://github.com/retrixe/writer.git",
+  "author": "retrixe",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "start": "go run *.go",
+    "build": "webpack && go build -ldflags=\"-s -w\" -o writer",
+    "lint": "eslint .",
+    "dev": "webpack --watch --env NODE_ENV=development"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.1.4",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "babel-loader": "^8.2.2",
+    "colorette": "^1.2.1",
+    "core-js": "^3.8.2",
+    "eslint": "^7.17.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-config-standard-react": "^11.0.1",
+    "eslint-import-resolver-node": "^0.3.4",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "regenerator-runtime": "^0.13.7",
+    "webpack": "^5.11.1",
+    "webpack-cli": "^4.3.1"
+  }
+}
