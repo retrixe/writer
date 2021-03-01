@@ -18,7 +18,7 @@ type DdProgress struct {
 // CopyConvert is a wrapper around the `dd` Unix utility.
 func CopyConvert(iff string, of string) (chan DdProgress, error) {
 	channel := make(chan DdProgress)
-	cmd := exec.Command("dd", "if="+iff, "of="+of, "status=progress", "bs=1M")
+	cmd := exec.Command("dd", "if="+iff, "of="+of, "status=progress", "bs=1M", "conv=fdatasync")
 	output, input := io.Pipe()
 	cmd.Stderr = input
 	cmd.Stdout = input

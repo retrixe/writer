@@ -5,7 +5,7 @@ import Dialog from './dialog'
 
 const App = () => {
   const [file, setFile] = useState('')
-  const [dialog, setDialog] = useState('Error: hello there')
+  const [dialog, setDialog] = useState('')
   const [devices, setDevices] = useState(['N/A'])
   const [progress, setProgress] = useState(0)
   const [selectedDevice, setSelectedDevice] = useState('N/A')

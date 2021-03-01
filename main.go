@@ -9,6 +9,13 @@ import (
 	"github.com/webview/webview"
 )
 
+/*
+TODO:
+- Design UI.
+- Validated image writing.
+- Privilege escalation via GUI.
+*/
+
 const html = `
 <html lang="en">
 <head>
@@ -18,8 +25,15 @@ const html = `
     name='viewport'
     content='user-scalable=0, initial-scale=1, minimum-scale=1, width=device-width, height=device-height'
   />
+	<style>
+	body {
+		margin: 0;
+		font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",
+		  Ubuntu,Cantarell,Oxygen-Sans,"Helvetica Neue",Arial,Roboto,sans-serif;
+	}
+</style>
 </head>
-<body style="margin: 0;"><div id="app"></div><script>initiateReact()</script></body>
+<body><div id="app"></div><script>initiateReact()</script></body>
 </html>
 `
 
@@ -85,7 +99,7 @@ func main() {
 			homedir = "/"
 		}
 		filename, err := dialog.File().Title("Select image to flash").SetStartDir(homedir).Filter("Disk image file", "*iso", "*img").Load()
-		if err != nil {
+		if err != nil && err.Error() != "Cancelled" {
 			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
 			return
 		}
@@ -94,6 +108,7 @@ func main() {
 
 	// TODO: Bind privilege escalation.
 	// https://github.com/jorangreef/sudo-prompt
+	// https://github.com/lu4p/go-escalate/blob/master/escalate_windows.go
 	// https://stackoverflow.com/questions/31558066/how-to-ask-for-administer-privileges-on-windows-with-go
 
 	// Bind flashing.
