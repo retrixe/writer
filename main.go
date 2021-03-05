@@ -50,21 +50,22 @@ func main() {
 	w = webview.New(debug)
 	defer w.Destroy()
 	w.SetTitle("Writer")
-	w.SetSize(420, 210, webview.HintNone)
+	w.SetSize(420, 210, webview.HintMin)
 
 	// Bind variables.
 	// w.Bind("setFileGo", func(newFile string) {file = newFile})
 
 	// Bind a function to initiate React via webview.Eval.
-	w.Bind("initiateReact", func() {
-		w.Eval(js)
-		w.SetSize(420, 100, webview.HintMin)
-		// Call setDevicesReact.
+	w.Bind("initiateReact", func() { w.Eval(js) })
+
+	// Bind a function to request refresh of devices attached.
+	w.Bind("refreshDevices", func() {
 		devices := GetDevices()
 		jsonifiedDevices := make([]string, len(devices))
 		for index, device := range devices {
 			jsonifiedDevices[index] = ParseToJsString(device)
 		}
+		// Call setDevicesReact.
 		w.Eval("setDevicesReact([" + strings.Join(jsonifiedDevices, ", ") + "])")
 		w.Eval("setSelectedDeviceReact(" + ParseToJsString(devices[0]) + ")")
 	})
