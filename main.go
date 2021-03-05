@@ -9,12 +9,7 @@ import (
 	"github.com/webview/webview"
 )
 
-/*
-TODO:
-- Design UI.
-- Validated image writing.
-- Privilege escalation via GUI.
-*/
+// TODO: Design UI, refine UX and validate image writing.
 
 const html = `
 <html lang="en">
@@ -31,7 +26,7 @@ const html = `
 		font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",
 		  Ubuntu,Cantarell,Oxygen-Sans,"Helvetica Neue",Arial,Roboto,sans-serif;
 	}
-</style>
+  </style>
 </head>
 <body><div id="app"></div><script>initiateReact()</script></body>
 </html>
@@ -39,9 +34,8 @@ const html = `
 
 var w webview.WebView
 
-// TODO: Do these even need to be bound? Can't JavaScript store them and send
-// them back when needed? This is creating 2 unnecessary pieces of state that
-// are prone to desync.
+// TODO: Do these even need to be bound? Can't JavaScript store them and send them back
+// when needed? This is creating 2 unnecessary pieces of state that are prone to desync.
 var file = ""
 var selectedDevice = ""
 
@@ -105,11 +99,6 @@ func main() {
 		}
 		SetFile(filename) // Send this back to React as well.
 	})
-
-	// TODO: Bind privilege escalation.
-	// https://github.com/jorangreef/sudo-prompt
-	// https://github.com/lu4p/go-escalate/blob/master/escalate_windows.go
-	// https://stackoverflow.com/questions/31558066/how-to-ask-for-administer-privileges-on-windows-with-go
 
 	// Bind flashing.
 	w.Bind("flash", func() {

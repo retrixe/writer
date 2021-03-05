@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"io"
-	"os/exec"
 	"strconv"
 	"strings"
 )
@@ -18,11 +17,14 @@ type DdProgress struct {
 // CopyConvert is a wrapper around the `dd` Unix utility.
 func CopyConvert(iff string, of string) (chan DdProgress, error) {
 	channel := make(chan DdProgress)
-	cmd := exec.Command("dd", "if="+iff, "of="+of, "status=progress", "bs=1M", "conv=fdatasync")
+	cmd, err := ElevatedCommand("dd", "if="+iff, "of="+of, "status=progress", "bs=1M", "conv=fdatasync")
+	if err != nil {
+		return nil, err
+	}
 	output, input := io.Pipe()
 	cmd.Stderr = input
 	cmd.Stdout = input
-	err := cmd.Start()
+	err = cmd.Start()
 	if err != nil {
 		return nil, err
 	}
@@ -43,6 +45,7 @@ func CopyConvert(iff string, of string) (chan DdProgress, error) {
 		scanner.Split(ScanCrLines)
 		for scanner.Scan() {
 			text := scanner.Text()
+			println(text)
 			firstSpace := strings.Index(text, " ")
 			if firstSpace != -1 && strings.HasPrefix(text[firstSpace+1:], "bytes (") {
 				// TODO: Probably handle error, but we can't tell full dd behavior without seeing the code.
