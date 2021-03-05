@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { css } from '@emotion/react'
 import ReactDOM from 'react-dom'
 import Dialog from './dialog'
@@ -9,8 +9,7 @@ const App = () => {
   const [devices, setDevices] = useState(['N/A'])
   const [progress, setProgress] = useState(0)
   const [selectedDevice, setSelectedDevice] = useState('N/A')
-  useEffect(() => window.setFileGo(file), [file])
-  useEffect(() => window.setSelectedDeviceGo(selectedDevice), [selectedDevice])
+  // useEffect(() => window.setFileGo(file), [file])
   window.setFileReact = setFile
   window.setDialogReact = setDialog
   window.setDevicesReact = setDevices
@@ -42,7 +41,7 @@ const App = () => {
         <br />
         <span>Step 3: Click the button below to begin flashing.</span>
         <div css={css`display: flex; align-items: center;`}>
-          <button onClick={() => window.flash()}>Flash</button>
+          <button onClick={() => window.flash(file, selectedDevice)}>Flash</button>
           <div css={css`width: 5;`} />
           <span>Progress: {progress}</span>
         </div>

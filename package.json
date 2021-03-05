@@ -8,9 +8,11 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
+    "lint": "eslint .",
     "start": "go run *.go",
     "build": "webpack && go build -ldflags=\"-s -w\" -o writer",
-    "lint": "eslint .",
+    "build:go": "go build -ldflags=\"-s -w\" -o writer",
+    "build:js": "webpack",
     "dev": "webpack --watch --env NODE_ENV=development"
   },
   "dependencies": {

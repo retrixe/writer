@@ -34,10 +34,7 @@ const html = `
 
 var w webview.WebView
 
-// TODO: Do these even need to be bound? Can't JavaScript store them and send them back
-// when needed? This is creating 2 unnecessary pieces of state that are prone to desync.
-var file = ""
-var selectedDevice = ""
+// var file = ""
 
 // ParseToJsString takes a string and escapes slashes and double-quotes,
 // and converts it to a string that can be passed to JavaScript.
@@ -46,31 +43,17 @@ func ParseToJsString(s string) string {
 }
 
 // SetFile sets the value of the file variable in both Go and React.
-func SetFile(value string) {
-	file = value
-	w.Eval("setFileReact(" + ParseToJsString(value) + ")")
-}
-
-// SetSelectedDevice sets the value of the selectedDevice variable in both Go and React.
-func SetSelectedDevice(value string) {
-	selectedDevice = value
-	w.Eval("setSelectedDeviceReact(" + ParseToJsString(value) + ")")
-}
+// func SetFile(value string) {file = value;w.Eval("setFileReact(" + ParseToJsString(value) + ")")}
 
 func main() {
-	debug := true // TODO
+	debug := true
 	w = webview.New(debug)
 	defer w.Destroy()
 	w.SetTitle("Writer")
 	w.SetSize(420, 210, webview.HintNone)
 
 	// Bind variables.
-	w.Bind("setFileGo", func(newFile string) {
-		file = newFile
-	})
-	w.Bind("setSelectedDeviceGo", func(newSelectedDevice string) {
-		selectedDevice = newSelectedDevice
-	})
+	// w.Bind("setFileGo", func(newFile string) {file = newFile})
 
 	// Bind a function to initiate React via webview.Eval.
 	w.Bind("initiateReact", func() {
@@ -83,7 +66,7 @@ func main() {
 			jsonifiedDevices[index] = ParseToJsString(device)
 		}
 		w.Eval("setDevicesReact([" + strings.Join(jsonifiedDevices, ", ") + "])")
-		SetSelectedDevice(devices[0])
+		w.Eval("setSelectedDeviceReact(" + ParseToJsString(devices[0]) + ")")
 	})
 
 	// Bind a function to prompt for file.
@@ -96,12 +79,13 @@ func main() {
 		if err != nil && err.Error() != "Cancelled" {
 			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
 			return
+		} else if err == nil {
+			w.Eval("setFileReact(" + ParseToJsString(filename) + ")") // Send this back to React as well.
 		}
-		SetFile(filename) // Send this back to React as well.
 	})
 
 	// Bind flashing.
-	w.Bind("flash", func() {
+	w.Bind("flash", func(file string, selectedDevice string) {
 		channel, err := CopyConvert(file, selectedDevice)
 		if err != nil {
 			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
