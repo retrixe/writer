@@ -9,7 +9,7 @@ import (
 	"github.com/webview/webview"
 )
 
-// TODO: Design UI, refine UX and validate image writing.
+// TODO: Design UI, check disk vs ISO sizes, allow cancelling flashing and validate image writing.
 
 const html = `
 <html lang="en">

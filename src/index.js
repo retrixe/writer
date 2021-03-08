@@ -21,6 +21,7 @@ const App = () => {
     if (selectedDevice && selectedDevice !== 'N/A') window.flash(file, selectedDevice)
     else setDialog('Error: Select a device to flash the ISO to!')
   }
+  const onFileInputChange = (event) => setFile(event.target.value.replace(/\n/g, ''))
 
   return (
     <>
@@ -32,7 +33,7 @@ const App = () => {
       <div css={css`padding: 8;`}>
         <span>Step 1: Enter the path to the file.</span>
         <div css={css`display: flex; padding-bottom: 0.4em;`}>
-          <input css={css`width: 100%;`} value={file} onChange={e => setFile(e.target.value)} />
+          <textarea css={css`width: 100%;`} value={file} onChange={onFileInputChange} />
           <button onClick={() => window.promptForFile()}>Select ISO</button>
         </div>
         <span>Step 2: Select the device to flash the ISO to.</span>
