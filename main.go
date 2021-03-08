@@ -60,14 +60,22 @@ func main() {
 
 	// Bind a function to request refresh of devices attached.
 	w.Bind("refreshDevices", func() {
-		devices := GetDevices()
+		devices, err := GetDevices()
+		if err != nil {
+			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
+			return
+		}
 		jsonifiedDevices := make([]string, len(devices))
 		for index, device := range devices {
-			jsonifiedDevices[index] = ParseToJsString(device)
+			if device.Model == "" {
+				jsonifiedDevices[index] = ParseToJsString(device.Name + " (" + device.Size + ")")
+			} else {
+				jsonifiedDevices[index] = ParseToJsString(device.Name + " (" + device.Model + ", " + device.Size + ")")
+			}
 		}
 		// Call setDevicesReact.
 		w.Eval("setDevicesReact([" + strings.Join(jsonifiedDevices, ", ") + "])")
-		w.Eval("setSelectedDeviceReact(" + ParseToJsString(devices[0]) + ")")
+		w.Eval("setSelectedDeviceReact(" + jsonifiedDevices[0] + ")")
 	})
 
 	// Bind a function to prompt for file.

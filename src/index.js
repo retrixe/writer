@@ -18,7 +18,7 @@ const App = () => {
   window.setSelectedDeviceReact = setSelectedDevice
 
   const onFlashButtonClick = () => {
-    if (selectedDevice && selectedDevice !== 'N/A') window.flash(file, selectedDevice)
+    if (selectedDevice && selectedDevice !== 'N/A') window.flash(file, selectedDevice.split(' ')[0])
     else setDialog('Error: Select a device to flash the ISO to!')
   }
   const onFileInputChange = (event) => setFile(event.target.value.replace(/\n/g, ''))
