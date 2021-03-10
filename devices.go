@@ -19,6 +19,15 @@ func GetDevices() ([]Device, error) {
 		return nil, err
 	}
 
+	bootDevices, err := exec.Command("df", "/", "/home").Output()
+	if err != nil {
+		return nil, err
+	}
+
+	splitBoot := strings.Split(string(bootDevices), "\n")
+	rootPart := splitBoot[1]
+	homePart := splitBoot[2]
+
 	files := strings.Split(string(res), "\n")
 	files = files[:len(files)-1]
 
@@ -26,7 +35,9 @@ func GetDevices() ([]Device, error) {
 
 	for _, file := range files {
 		disk := strings.Fields(file)
-		if disk[1] == "disk" && !strings.HasPrefix(disk[0], "zram") {
+		if disk[1] == "disk" && !strings.HasPrefix(disk[0], "zram") &&
+			!strings.HasPrefix(rootPart, "/dev/"+disk[0]) &&
+			!strings.HasPrefix(homePart, "/dev/"+disk[0]) {
 			device := Device{
 				Name: "/dev/" + disk[0],
 				Size: disk[2],
