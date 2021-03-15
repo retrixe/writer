@@ -59,12 +59,6 @@ func CopyConvert(iff string, of string) (chan DdProgress, error) {
 	return channel, nil
 }
 
-// GetDevices returns the list of USB devices available to read/write from.
-func GetDevices() []string {
-	// TODO: Complete GetDevices properly.
-	return []string{"/dev/null", "/dev/urandom"}
-}
-
 // dropCR drops a terminal \r from the data.
 func dropCR(data []byte) []byte {
 	if len(data) > 0 && data[len(data)-1] == '\r' {
