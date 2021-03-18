@@ -6,6 +6,7 @@ import Dialog from './dialog'
 const App = () => {
   const [file, setFile] = useState('')
   const [dialog, setDialog] = useState('')
+  const [confirm, setConfirm] = useState(false)
   const [devices, setDevices] = useState(['N/A'])
   const [progress, setProgress] = useState(0)
   const [selectedDevice, setSelectedDevice] = useState('N/A')
@@ -18,6 +19,8 @@ const App = () => {
   window.setSelectedDeviceReact = setSelectedDevice
 
   const onFlashButtonClick = () => {
+    if (!confirm) return setConfirm(true)
+    else setConfirm(false)
     if (selectedDevice && selectedDevice !== 'N/A') window.flash(file, selectedDevice.split(' ')[0])
     else setDialog('Error: Select a device to flash the ISO to!')
   }
@@ -51,7 +54,7 @@ const App = () => {
         </div>
         <span>Step 3: Click the button below to begin flashing.</span>
         <div css={css`display: flex; align-items: center; padding-top: 0.4em;`}>
-          <button onClick={onFlashButtonClick}>Flash</button>
+          <button onClick={onFlashButtonClick}>{confirm ? 'Confirm' : 'Flash'}</button>
           <div css={css`width: 5;`} />
           <span>Progress: {progress}</span>
         </div>

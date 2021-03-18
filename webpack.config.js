@@ -12,7 +12,7 @@ class InlineGolangJsPlugin {
       const buffer = Buffer.from(`package main\n\nconst js = \`\n${inlined}\n\`\n`)
       fs.writeFileSync('js.go', buffer)
 
-      console.log(`asset ${jsgo} ${buffer.byteLength} bytes ${generatedFromMain}`)
+      console.log(`asset ${jsgo} ${Math.ceil(buffer.byteLength / 1024)} KiB ${generatedFromMain}`)
     })
   }
 }
