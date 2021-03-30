@@ -5,10 +5,12 @@ import Dialog from './dialog'
 
 const App = () => {
   const [file, setFile] = useState('')
+  // TODO: const [speed, setSpeed] = useState(0)
   const [dialog, setDialog] = useState('')
   const [confirm, setConfirm] = useState(false)
   const [devices, setDevices] = useState(['N/A'])
   const [progress, setProgress] = useState(0)
+  const [fileSize, setFileSize] = useState(0)
   const [selectedDevice, setSelectedDevice] = useState('N/A')
   // useEffect(() => window.setFileGo(file), [file])
   useEffect(() => window.refreshDevices(), [])
@@ -16,6 +18,7 @@ const App = () => {
   window.setDialogReact = setDialog
   window.setDevicesReact = setDevices
   window.setProgressReact = setProgress
+  window.setFileSizeReact = setFileSize
   window.setSelectedDeviceReact = setSelectedDevice
 
   const onFlashButtonClick = () => {
@@ -56,7 +59,8 @@ const App = () => {
         <div css={css`display: flex; align-items: center; padding-top: 0.4em;`}>
           <button onClick={onFlashButtonClick}>{confirm ? 'Confirm' : 'Flash'}</button>
           <div css={css`width: 5;`} />
-          <span>Progress: {progress}</span>
+          {/* TODO: Reports NaN on ending. */}
+          {!!fileSize && !!progress && <span>Progress: {progress * 100 / fileSize}</span>}
         </div>
       </div>
     </>

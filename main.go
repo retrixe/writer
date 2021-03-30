@@ -89,7 +89,15 @@ func main() {
 			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
 			return
 		} else if err == nil {
-			w.Eval("setFileReact(" + ParseToJsString(filename) + ")") // Send this back to React as well.
+			stat, err := os.Stat(filename)
+			if err != nil {
+				w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
+			} else if !stat.Mode().IsRegular() {
+				w.Eval("setDialogReact(" + ParseToJsString("Error: Select a regular file!") + ")")
+			} else { // Send this back to React.
+				w.Eval("setFileSizeReact(" + strconv.Itoa(int(stat.Size())) + ")")
+				w.Eval("setFileReact(" + ParseToJsString(filename) + ")")
+			}
 		}
 	})
 
