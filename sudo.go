@@ -17,7 +17,7 @@ var ErrPkexecNotFound = errors.New("unable to find `pkexec`, run app with `sudo`
 
 // ErrWindowsUnsupported is returned when attempting to run a command with elevation on Windows.
 var ErrWindowsUnsupported = errors.New(
-	"Windows is currently unsupported, only macOS, Linux and Unix-like are supported",
+	"windows is currently unsupported, only macOS, Linux and Unix-like are supported",
 )
 
 // ErrMacOsWip is returned when attempting to run a command with elevation on macOS (WIP support).

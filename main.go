@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	_ "embed"
+
 	"github.com/sqweek/dialog"
 	"github.com/webview/webview"
 )
@@ -33,6 +35,9 @@ const html = `
 `
 
 var w webview.WebView
+
+//go:embed dist/main.js
+var js string
 
 // var file = ""
 

@@ -1,6 +1,6 @@
 module github.com/retrixe/writer
 
-go 1.13
+go 1.16
 
 require (
 	github.com/sqweek/dialog v0.0.0-20200911184034-8a3d98e8211d

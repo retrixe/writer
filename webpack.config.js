@@ -1,6 +1,6 @@
-const fs = require('fs')
+// const fs = require('fs')
 const path = require('path')
-const { bold, greenBright, yellowBright } = require('colorette')
+/* const { bold, greenBright, yellowBright } = require('colorette')
 
 const jsgo = bold(greenBright('js.go'))
 const generatedFromMain = bold(yellowBright('[generated from main.js]'))
@@ -15,7 +15,7 @@ class InlineGolangJsPlugin {
       console.log(`asset ${jsgo} ${Math.ceil(buffer.byteLength / 1024)} KiB ${generatedFromMain}`)
     })
   }
-}
+} */
 
 const isDev = env => (
   (env && env.NODE_ENV === 'development') ||
@@ -44,6 +44,6 @@ module.exports = env => ({
         }
       }
     }]
-  },
-  plugins: [new InlineGolangJsPlugin()]
+  }
+  // plugins: [new InlineGolangJsPlugin()]
 })
