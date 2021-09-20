@@ -3,6 +3,8 @@ import { css } from '@emotion/react'
 import ReactDOM from 'react-dom'
 import Dialog from './dialog'
 
+const floor = num => Math.floor(num * 100) / 100
+
 const App = () => {
   const [file, setFile] = useState('')
   const [speed, setSpeed] = useState('')
@@ -19,10 +21,19 @@ const App = () => {
   window.setDialogReact = setDialog
   window.setDevicesReact = setDevices
   window.setProgressReact = setProgress
-  window.setFileSizeReact = setFileSize // TODO: This isn't set when the ISO is manually typed in.
+  window.setFileSizeReact = setFileSize
   window.setSelectedDeviceReact = setSelectedDevice
 
+  const inProgress = !!progress && typeof progress === 'number'
+  useEffect(() => setConfirm(false), [inProgress])
   const onFlashButtonClick = () => {
+    if (inProgress) { // TODO: A dialog would be better.
+      if (confirm) {
+        setConfirm(false)
+        window.cancelFlash()
+      } else setConfirm(true)
+      return
+    }
     setProgress(0)
     if (selectedDevice === 'N/A') return setDialog('Error: Select a device to flash the ISO to!')
     if (!file) return setDialog('Error: Select an ISO to flash to a device!')
@@ -60,11 +71,11 @@ const App = () => {
         </div>
         <span>Step 3: Click the button below to begin flashing.</span>
         <div css={css`display: flex; align-items: center; padding-top: 0.4em;`}>
-          <button onClick={onFlashButtonClick}>{confirm ? 'Confirm' : 'Flash'}</button>
+          <button onClick={onFlashButtonClick}>
+            {confirm ? 'Confirm?' : (inProgress ? 'Cancel' : 'Flash')}
+          </button>
           <div css={css`width: 5;`} />
-          {!!fileSize && !!progress && typeof progress === 'number' && (
-            <span>Progress: {progress * 100 / fileSize} | Speed: {speed}</span>
-          )}
+          {inProgress && <span>Progress: {floor(progress * 100 / fileSize)}% | Speed: {speed}</span>}
           {typeof progress === 'string' && <span>{progress}</span>}
         </div>
       </div>

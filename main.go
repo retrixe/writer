@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/webview/webview"
 )
 
-// TODO: Design UI, check disk vs ISO sizes, allow cancelling flashing and validate image writing.
+// TODO: Design UI and check disk vs ISO sizes. Validate written image?
 
 const html = `
 <html lang="en">
@@ -107,8 +108,21 @@ func main() {
 	})
 
 	// Bind flashing.
+	var currentDdProcess *exec.Cmd
+	var cancelled bool = false
 	w.Bind("flash", func(file string, selectedDevice string) {
-		channel, err := CopyConvert(file, selectedDevice)
+		stat, err := os.Stat(file)
+		if err != nil {
+			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
+			return
+		} else if !stat.Mode().IsRegular() {
+			w.Eval("setDialogReact(" + ParseToJsString("Error: Select a regular file!") + ")")
+			return
+		} else {
+			w.Eval("setFileSizeReact(" + strconv.Itoa(int(stat.Size())) + ")")
+		}
+		channel, dd, err := CopyConvert(file, selectedDevice)
+		currentDdProcess = dd
 		if err != nil {
 			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
 			return
@@ -117,7 +131,10 @@ func main() {
 			errored := false
 			for {
 				progress, ok := <-channel
-				if ok {
+				if cancelled {
+					cancelled = false
+					return
+				} else if ok {
 					w.Dispatch(func() {
 						if progress.Error != nil { // Error is always the last emitted.
 							errored = true
@@ -135,6 +152,12 @@ func main() {
 				w.Dispatch(func() { w.Eval("setProgressReact(\"Done!\")") })
 			}
 		})()
+	})
+
+	w.Bind("cancelFlash", func() {
+		cancelled = true
+		currentDdProcess.Process.Kill()
+		w.Dispatch(func() { w.Eval("setProgressReact(\"Cancelled the operation!\")") })
 	})
 
 	w.Navigate("data:text/html," + html)

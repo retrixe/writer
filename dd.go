@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"io"
+	"os/exec"
 	"strconv"
 	"strings"
 )
@@ -16,18 +17,18 @@ type DdProgress struct {
 }
 
 // CopyConvert is a wrapper around the `dd` Unix utility.
-func CopyConvert(iff string, of string) (chan DdProgress, error) {
+func CopyConvert(iff string, of string) (chan DdProgress, *exec.Cmd, error) {
 	channel := make(chan DdProgress)
 	cmd, err := ElevatedCommand("dd", "if="+iff, "of="+of, "status=progress", "bs=1M", "conv=fdatasync")
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	output, input := io.Pipe()
 	cmd.Stderr = input
 	cmd.Stdout = input
 	err = cmd.Start()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	// Wait for command to exit.
 	go (func() {
@@ -59,7 +60,7 @@ func CopyConvert(iff string, of string) (chan DdProgress, error) {
 			}
 		}
 	})()
-	return channel, nil
+	return channel, cmd, nil
 }
 
 // dropCR drops a terminal \r from the data.
