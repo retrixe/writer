@@ -12,7 +12,7 @@ import (
 	"github.com/webview/webview"
 )
 
-// TODO: Design UI and check disk vs ISO sizes. Validate written image?
+// TODO: Design UI (with live warnings/errors). Validate written image?
 
 const html = `
 <html lang="en">
@@ -73,10 +73,11 @@ func main() {
 		}
 		jsonifiedDevices := make([]string, len(devices))
 		for index, device := range devices {
+			base := strconv.Itoa(device.Bytes) + " " + device.Name
 			if device.Model == "" {
-				jsonifiedDevices[index] = ParseToJsString(device.Name + " (" + device.Size + ")")
+				jsonifiedDevices[index] = ParseToJsString(base + " (" + device.Size + ")")
 			} else {
-				jsonifiedDevices[index] = ParseToJsString(device.Name + " (" + device.Model + ", " + device.Size + ")")
+				jsonifiedDevices[index] = ParseToJsString(base + " (" + device.Model + ", " + device.Size + ")")
 			}
 		}
 		// Call setDevicesReact.

@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom'
 import Dialog from './dialog'
 
 const floor = num => Math.floor(num * 100) / 100
+// const varToString = varObj => Object.keys(varObj)[0]; const s = (setObj, value) => {
+// const name = varToString(setObj); setObj[name](value); window[name + 'Go'](value)}
 
 const App = () => {
   const [file, setFile] = useState('')
@@ -37,6 +39,9 @@ const App = () => {
     setProgress(0)
     if (selectedDevice === 'N/A') return setDialog('Error: Select a device to flash the ISO to!')
     if (!file) return setDialog('Error: Select an ISO to flash to a device!')
+    if (BigInt(fileSize) > BigInt(selectedDevice.split(' ')[0])) {
+      return setDialog('Error: The ISO file is too big to fit on the selected drive!')
+    }
     if (!confirm) return setConfirm(true)
     setConfirm(false)
     window.flash(file, selectedDevice.split(' ')[0])
@@ -63,7 +68,9 @@ const App = () => {
             value={selectedDevice}
             onChange={e => setSelectedDevice(e.target.value)}
           >
-            {devices.map(device => <option key={device} value={device}>{device}</option>)}
+            {devices.map(device => (
+              <option key={device} value={device}>{device.substr(device.indexOf(' ') + 1)}</option>
+            ))}
           </select>
           <button onClick={() => window.refreshDevices()} css={css`min-width: 69px;`}>
             Refresh

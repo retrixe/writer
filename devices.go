@@ -2,6 +2,7 @@ package main
 
 import (
 	"os/exec"
+	"strconv"
 	"strings"
 )
 
@@ -10,11 +11,12 @@ type Device struct {
 	Name  string
 	Model string
 	Size  string
+	Bytes int
 }
 
 // GetDevices returns the list of USB devices available to read/write from.
 func GetDevices() ([]Device, error) {
-	res, err := exec.Command("lsblk", "-o", "KNAME,TYPE,SIZE,MODEL").Output()
+	res, err := exec.Command("lsblk", "-b", "-o", "KNAME,TYPE,SIZE,MODEL").Output()
 	if err != nil {
 		return nil, err
 	}
@@ -38,9 +40,11 @@ func GetDevices() ([]Device, error) {
 		if disk[1] == "disk" && !strings.HasPrefix(disk[0], "zram") &&
 			!strings.HasPrefix(rootPart, "/dev/"+disk[0]) &&
 			!strings.HasPrefix(homePart, "/dev/"+disk[0]) {
+			bytes, _ := strconv.Atoi(disk[2])
 			device := Device{
-				Name: "/dev/" + disk[0],
-				Size: disk[2],
+				Name:  "/dev/" + disk[0],
+				Size:  bytesToString(bytes),
+				Bytes: bytes,
 			}
 
 			if len(disk) >= 4 && disk[3] != "" {
@@ -52,4 +56,22 @@ func GetDevices() ([]Device, error) {
 	}
 
 	return disks, nil
+}
+
+func bytesToString(bytes int) string {
+	kb := float64(bytes) / 1000
+	mb := kb / 1000
+	gb := mb / 1000
+	tb := gb / 1000
+	if tb >= 1 {
+		return strconv.FormatFloat(tb, 'f', 1, 64) + "TB"
+	} else if gb >= 1 {
+		return strconv.FormatFloat(gb, 'f', 1, 64) + "GB"
+	} else if mb >= 1 {
+		return strconv.FormatFloat(mb, 'f', 1, 64) + "MB"
+	} else if kb >= 1 {
+		return strconv.FormatFloat(kb, 'f', 1, 64) + "KB"
+	} else {
+		return strconv.Itoa(bytes) + "B"
+	}
 }
