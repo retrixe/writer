@@ -16,10 +16,12 @@
     "dev": "webpack --watch --env NODE_ENV=development"
   },
   "dependencies": {
-    "@emotion/react": "^11.1.4",
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@mui/material": "^5.0.0",
     "prop-types": "^15.7.2",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -29,7 +31,8 @@
     "colorette": "^1.2.1",
     "core-js": "^3.8.2",
     "eslint": "^7.17.0",
-    "eslint-config-standard": "^16.0.2",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-config-standard-jsx": "^10.0.0",
     "eslint-config-standard-react": "^11.0.1",
     "eslint-import-resolver-node": "^0.3.4",
     "eslint-plugin-import": "^2.22.1",
@@ -38,7 +41,7 @@
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "regenerator-runtime": "^0.13.7",
-    "webpack": "^5.11.1",
-    "webpack-cli": "^4.3.1"
+    "webpack": "^5.53.0",
+    "webpack-cli": "^4.8.0"
   }
 }

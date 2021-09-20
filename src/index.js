@@ -32,10 +32,10 @@ const App = () => {
   return (
     <>
       {dialog && <Dialog
-        dismiss={() => setDialog('')}
+        handleDismiss={() => setDialog('')}
         message={dialog.startsWith('Error: ') ? dialog.substr(7) : dialog}
         error={dialog.startsWith('Error: ')}
-      />}
+                 />}
       <div css={css`padding: 8;`}>
         <span>Step 1: Enter the path to the file.</span>
         <div css={css`display: flex; padding-bottom: 0.4em;`}>

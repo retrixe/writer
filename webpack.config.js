@@ -8,8 +8,8 @@ class InlineGolangJsPlugin {
   apply (compiler) {
     compiler.hooks.done.tap('InlineGolangHtmlPlugin', stats => {
       const js = fs.readFileSync(path.resolve(__dirname, 'dist', 'main.js'), { encoding: 'utf8' })
-      const inlined = js.split('`').join('`+"`"+`')
-      const buffer = Buffer.from(`package main\n\nconst js = \`\n${inlined}\n\`\n`)
+      const goFile = `package main\n\nconst js = \`\n${js.replace(/`/g, '`+"`"+`')}\n\`\n`
+      const buffer = Buffer.from(goFile)
       fs.writeFileSync('js.go', buffer)
 
       console.log(`asset ${jsgo} ${Math.ceil(buffer.byteLength / 1024)} KiB ${generatedFromMain}`)

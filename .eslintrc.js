@@ -3,8 +3,9 @@ module.exports = {
     es6: true,
     browser: true
   },
-  extends: ['plugin:react/recommended', 'standard', 'standard-react'],
+  extends: ['plugin:react/recommended', 'standard', 'standard-react', 'standard-jsx'],
   plugins: ['react-hooks'],
+  ignorePatterns: ['.eslintrc.js', 'dist', '.yarn/*', '.pnp.*'],
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
