@@ -1,6 +1,6 @@
 {
   "name": "writer",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "description": "The HTML/CSS/JS component of writer.",
   "main": "src/index.js",
   "repository": "https://github.com/retrixe/writer.git",

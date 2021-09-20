@@ -52,6 +52,10 @@ func ParseToJsString(s string) string {
 // func SetFile(value string) {file = value;w.Eval("setFileReact(" + ParseToJsString(value) + ")")}
 
 func main() {
+	if os.Args[1] == "-v" || os.Args[1] == "--version" {
+		println("writer version v1.0.0-alpha.1")
+		return
+	}
 	debug := true
 	w = webview.New(debug)
 	defer w.Destroy()

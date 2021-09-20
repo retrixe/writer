@@ -12,16 +12,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-16.04, macos-latest]
+        os: [ubuntu-18.04, macos-latest]
     steps:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
-    - name: Set up Go 1.16
+    - name: Set up Go 1.17
       uses: actions/setup-go@v2
       with:
-        go-version: ^1.16
+        go-version: ^1.17
       id: go
 
     - name: Check out code into the Go module directory
@@ -37,7 +37,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install --no-install-recommends libwebkit2gtk-4.0-dev
-      if: ${{ success() && matrix.os == 'ubuntu-16.04' }}
+      if: ${{ success() && matrix.os == 'ubuntu-18.04' }}
 
     - name: Cache .yarn
       uses: actions/cache@v2
@@ -68,7 +68,7 @@ jobs:
     
     - name: Upload a Build Artifact (Linux)
       uses: actions/upload-artifact@v2.1.4
-      if: ${{ success() && matrix.os == 'ubuntu-16.04' }}
+      if: ${{ success() && matrix.os == 'ubuntu-18.04' }}
       with:
         # Artifact name
         name: writer-linux # optional, default is artifact
