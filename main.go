@@ -114,13 +114,16 @@ func main() {
 			return
 		}
 		go (func() {
+			errored := false
 			for {
 				progress, ok := <-channel
 				if ok {
 					w.Dispatch(func() {
 						if progress.Error != nil { // Error is always the last emitted.
+							errored = true
 							w.Eval("setDialogReact(" + ParseToJsString("Error: "+progress.Error.Error()) + ")")
 						} else {
+							w.Eval("setSpeedReact(" + ParseToJsString(progress.Speed) + ")")
 							w.Eval("setProgressReact(" + strconv.Itoa(progress.Bytes) + ")")
 						}
 					})
@@ -128,9 +131,9 @@ func main() {
 					break
 				}
 			}
-			w.Dispatch(func() {
-				w.Eval("setProgressReact(\"Done!\")")
-			})
+			if !errored {
+				w.Dispatch(func() { w.Eval("setProgressReact(\"Done!\")") })
+			}
 		})()
 	})
 

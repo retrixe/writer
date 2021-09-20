@@ -12,6 +12,7 @@ import (
 type DdProgress struct {
 	Bytes int
 	Error error
+	Speed string
 }
 
 // CopyConvert is a wrapper around the `dd` Unix utility.
@@ -49,9 +50,11 @@ func CopyConvert(iff string, of string) (chan DdProgress, error) {
 			firstSpace := strings.Index(text, " ")
 			if firstSpace != -1 && strings.HasPrefix(text[firstSpace+1:], "bytes (") {
 				// TODO: Probably handle error, but we can't tell full dd behavior without seeing the code.
-				parse, _ := strconv.Atoi(text[:firstSpace])
+				bytes, _ := strconv.Atoi(text[:firstSpace])
+				split := strings.Split(text, ", ")
 				channel <- DdProgress{
-					Bytes: parse,
+					Bytes: bytes,
+					Speed: split[len(split)-1],
 				}
 			}
 		}

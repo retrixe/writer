@@ -5,7 +5,7 @@ import Dialog from './dialog'
 
 const App = () => {
   const [file, setFile] = useState('')
-  // TODO: const [speed, setSpeed] = useState(0)
+  const [speed, setSpeed] = useState('')
   const [dialog, setDialog] = useState('')
   const [confirm, setConfirm] = useState(false)
   const [devices, setDevices] = useState(['N/A'])
@@ -15,17 +15,20 @@ const App = () => {
   // useEffect(() => window.setFileGo(file), [file])
   useEffect(() => window.refreshDevices(), [])
   window.setFileReact = setFile
+  window.setSpeedReact = setSpeed
   window.setDialogReact = setDialog
   window.setDevicesReact = setDevices
   window.setProgressReact = setProgress
-  window.setFileSizeReact = setFileSize
+  window.setFileSizeReact = setFileSize // TODO: This isn't set when the ISO is manually typed in.
   window.setSelectedDeviceReact = setSelectedDevice
 
   const onFlashButtonClick = () => {
+    setProgress(0)
+    if (selectedDevice === 'N/A') return setDialog('Error: Select a device to flash the ISO to!')
+    if (!file) return setDialog('Error: Select an ISO to flash to a device!')
     if (!confirm) return setConfirm(true)
-    else setConfirm(false)
-    if (selectedDevice && selectedDevice !== 'N/A') window.flash(file, selectedDevice.split(' ')[0])
-    else setDialog('Error: Select a device to flash the ISO to!')
+    setConfirm(false)
+    window.flash(file, selectedDevice.split(' ')[0])
   }
   const onFileInputChange = (event) => setFile(event.target.value.replace(/\n/g, ''))
 
@@ -59,8 +62,10 @@ const App = () => {
         <div css={css`display: flex; align-items: center; padding-top: 0.4em;`}>
           <button onClick={onFlashButtonClick}>{confirm ? 'Confirm' : 'Flash'}</button>
           <div css={css`width: 5;`} />
-          {/* TODO: Reports NaN on ending. */}
-          {!!fileSize && !!progress && <span>Progress: {progress * 100 / fileSize}</span>}
+          {!!fileSize && !!progress && typeof progress === 'number' && (
+            <span>Progress: {progress * 100 / fileSize} | Speed: {speed}</span>
+          )}
+          {typeof progress === 'string' && <span>{progress}</span>}
         </div>
       </div>
     </>
