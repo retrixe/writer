@@ -10,6 +10,13 @@ import (
 
 // IsElevated returns if the application is running with elevated privileges.
 func IsElevated() bool {
+	if runtime.GOOS == "windows" {
+		f, err := os.Open("\\\\.\\PHYSICALDRIVE0")
+		if f != nil {
+			defer f.Close()
+		}
+		return err == nil
+	}
 	return os.Geteuid() == 0
 }
 
@@ -19,14 +26,9 @@ var ErrPkexecNotFound = errors.New("unable to find `pkexec`, run app with `sudo`
 // ErrOsascriptNotFound is returned when `osascript` (needed on macOS) is not found.
 var ErrOsascriptNotFound = errors.New("unable to find `osascript`, run app with `sudo` directly")
 
-// ErrWindowsUnsupported is returned when attempting to run a command with elevation on Windows.
-var ErrWindowsUnsupported = errors.New(
-	"windows is currently unsupported, only macOS, Linux and Unix-like are supported",
-)
-
-// ErrMacOsWip is returned when attempting to run a command with elevation on macOS (WIP support).
-var ErrMacOsWip = errors.New(
-	"graphical elevation is unavailable on macOS (for now), run app with `sudo` from the terminal",
+// ErrWindowsNoOp is returned when attempting to run a command with elevation on Windows.
+var ErrWindowsNoOp = errors.New(
+	"graphical elevation is unavailable on Windows, run this app as an administrator",
 )
 
 // ElevatedCommand executes a command with elevated privileges.
@@ -34,7 +36,7 @@ func ElevatedCommand(name string, arg ...string) (*exec.Cmd, error) {
 	if IsElevated() {
 		return exec.Command(name, arg...), nil
 	} else if runtime.GOOS == "windows" {
-		return nil, ErrWindowsUnsupported
+		return nil, ErrWindowsNoOp
 	} else if runtime.GOOS == "darwin" {
 		return elevatedMacCommand(name, arg...)
 	}

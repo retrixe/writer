@@ -1,3 +1,5 @@
+//go:build !launcher
+
 package main
 
 import (
@@ -170,7 +172,11 @@ func main() {
 	w.Bind("cancelFlash", func() {
 		// TODO: This is terrible. Restrict to *nix when Windows support is added.
 		// We should eventually replicate sudo inside writer itself?
-		currentDdProcess.Process.Kill()
+		err := currentDdProcess.Process.Kill()
+		if err == nil {
+			cancelled = true
+			w.Dispatch(func() { w.Eval("setProgressReact(\"Cancelled the operation!\")") })
+		}
 		cmd, err := ElevatedCommand("kill", "-9", strconv.Itoa(currentDdProcess.Process.Pid))
 		if err != nil {
 			w.Dispatch(func() { w.Eval("setProgressReact(\"Error occurred when cancelling.\")") })
