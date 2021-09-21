@@ -57,7 +57,10 @@ func main() {
 		println("writer version v1.0.0-alpha.1")
 		return
 	}
-	debug := true // TODO
+	debug := false
+	if val, exists := os.LookupEnv("DEBUG"); exists {
+		debug = val == "true"
+	}
 	w = webview.New(debug)
 	defer w.Destroy()
 	w.SetSize(420, 210, webview.HintNone)
@@ -163,14 +166,20 @@ func main() {
 	})
 
 	w.Bind("cancelFlash", func() {
-		cancelled = true
-		// TODO: This doesn't work properly. Restrict to *nix when Windows support is added.
+		// TODO: This is terrible. Restrict to *nix when Windows support is added.
 		// We should eventually replicate sudo inside writer itself?
 		currentDdProcess.Process.Kill()
 		cmd, err := ElevatedCommand("kill", "-9", strconv.Itoa(currentDdProcess.Process.Pid))
-		if err != nil || cmd.Wait() != nil {
+		if err != nil {
 			w.Dispatch(func() { w.Eval("setProgressReact(\"Error occurred when cancelling.\")") })
+			return
+		}
+		_, err = cmd.Output()
+		if err != nil {
+			w.Dispatch(func() { w.Eval("setProgressReact(\"Error occurred when cancelling.\")") })
+			return
 		} else {
+			cancelled = true
 			w.Dispatch(func() { w.Eval("setProgressReact(\"Cancelled the operation!\")") })
 		}
 	})
