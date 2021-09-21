@@ -13,6 +13,7 @@ import (
 )
 
 // TODO: Design UI (with live warnings/errors). Validate written image?
+// LOW-TODO: Future support for flashing to an internal drive?
 
 const html = `
 <html lang="en">
@@ -86,7 +87,9 @@ func main() {
 		}
 		// Call setDevicesReact.
 		w.Eval("setDevicesReact([" + strings.Join(jsonifiedDevices, ", ") + "])")
-		w.Eval("setSelectedDeviceReact(" + jsonifiedDevices[0] + ")")
+		if len(jsonifiedDevices) >= 1 {
+			w.Eval("setSelectedDeviceReact(" + jsonifiedDevices[0] + ")")
+		}
 	})
 
 	// Bind a function to prompt for file.
