@@ -56,11 +56,11 @@ func main() {
 		println("writer version v1.0.0-alpha.1")
 		return
 	}
-	debug := true
+	debug := true // TODO
 	w = webview.New(debug)
 	defer w.Destroy()
+	w.SetSize(420, 210, webview.HintNone)
 	w.SetTitle("Writer")
-	w.SetSize(420, 210, webview.HintMin)
 
 	// Bind variables.
 	// w.Bind("setFileGo", func(newFile string) {file = newFile})
