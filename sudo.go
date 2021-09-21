@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 )
 
 // IsElevated returns if the application is running with elevated privileges.
@@ -14,6 +15,9 @@ func IsElevated() bool {
 
 // ErrPkexecNotFound is returned when `pkexec` (needed on Linux, BSD and the like) is not found.
 var ErrPkexecNotFound = errors.New("unable to find `pkexec`, run app with `sudo` directly")
+
+// ErrOsascriptNotFound is returned when `osascript` (needed on macOS) is not found.
+var ErrOsascriptNotFound = errors.New("unable to find `osascript`, run app with `sudo` directly")
 
 // ErrWindowsUnsupported is returned when attempting to run a command with elevation on Windows.
 var ErrWindowsUnsupported = errors.New(
@@ -56,7 +60,19 @@ func elevatedLinuxCommand(name string, arg ...string) (*exec.Cmd, error) {
 	return cmd, nil
 }
 
-func elevatedMacCommand(name string, arg ...string) (*exec.Cmd, error) {
-	// TODO: macOS privilege escalation via GUI using osascript or the like.
-	return nil, ErrMacOsWip
+func elevatedMacCommand(name string, args ...string) (*exec.Cmd, error) {
+	osascript, err := exec.LookPath("osascript")
+	if err != nil {
+		return nil, ErrOsascriptNotFound
+	}
+	command := "exec " + name
+	for _, arg := range args {
+		command += ` \"` + strings.ReplaceAll(arg, `"`, `\\"`) + `\"`
+	}
+	cmd := exec.Command(
+		osascript,
+		"-e",
+		`do shell script "`+command+`" with administrator privileges`,
+	)
+	return cmd, nil
 }

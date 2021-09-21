@@ -164,8 +164,15 @@ func main() {
 
 	w.Bind("cancelFlash", func() {
 		cancelled = true
+		// TODO: This doesn't work properly. Restrict to *nix when Windows support is added.
+		// We should eventually replicate sudo inside writer itself?
 		currentDdProcess.Process.Kill()
-		w.Dispatch(func() { w.Eval("setProgressReact(\"Cancelled the operation!\")") })
+		cmd, err := ElevatedCommand("kill", "-9", strconv.Itoa(currentDdProcess.Process.Pid))
+		if err != nil || cmd.Wait() != nil {
+			w.Dispatch(func() { w.Eval("setProgressReact(\"Error occurred when cancelling.\")") })
+		} else {
+			w.Dispatch(func() { w.Eval("setProgressReact(\"Cancelled the operation!\")") })
+		}
 	})
 
 	w.Navigate("data:text/html," + html)

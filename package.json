@@ -10,7 +10,7 @@
   "scripts": {
     "lint": "eslint .",
     "start": "webpack && yarn start:go",
-    "start:go": "go run *.go",
+    "start:go": "go run .",
     "build": "yarn build:js && yarn build:go",
     "build:go": "go build -ldflags=\"-s -w\" -o writer",
     "build:js": "webpack",

@@ -44,7 +44,7 @@ const App = () => {
     }
     if (!confirm) return setConfirm(true)
     setConfirm(false)
-    window.flash(file, selectedDevice.split(' ')[0])
+    window.flash(file, selectedDevice.split(' ')[1])
   }
   const onFileInputChange = (event) => setFile(event.target.value.replace(/\n/g, ''))
 
