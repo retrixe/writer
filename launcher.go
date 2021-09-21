@@ -8,6 +8,8 @@ import (
 	"strings"
 	"syscall"
 	"unsafe"
+
+	_ "embed"
 )
 
 //go:embed writer.exe

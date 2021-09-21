@@ -62,9 +62,10 @@ jobs:
 
     - name: Build
       run: yarn build
+      if: ${{ success() && matrix.os != 'windows-latest' }}
 
-    - name: Build Windows UAC Launcher
-      run: go build -ldflags="-s -w -H launcher" -o launcher.exe -v launcher.go
+    - name: Build for Windows (including UAC launcher)
+      run: yarn build:windows
       if: ${{ success() && matrix.os == 'windows-latest' }}
 
 #    - name: Test
