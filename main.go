@@ -36,6 +36,8 @@ const html = `
 </html>
 `
 
+const version = "1.0.0-alpha.1"
+
 var w webview.WebView
 
 //go:embed dist/main.js
@@ -54,7 +56,7 @@ func ParseToJsString(s string) string {
 
 func main() {
 	if len(os.Args) >= 2 && (os.Args[1] == "-v" || os.Args[1] == "--version") {
-		println("writer version v1.0.0-alpha.1")
+		println("writer version v" + version)
 		return
 	}
 	debug := false
@@ -64,7 +66,7 @@ func main() {
 	w = webview.New(debug)
 	defer w.Destroy()
 	w.SetSize(420, 210, webview.HintNone)
-	w.SetTitle("Writer")
+	w.SetTitle("Writer " + version)
 
 	// Bind variables.
 	// w.Bind("setFileGo", func(newFile string) {file = newFile})
@@ -101,7 +103,7 @@ func main() {
 		if err != nil {
 			homedir = "/"
 		}
-		filename, err := dialog.File().Title("Select image to flash").SetStartDir(homedir).Filter("Disk image file", "*iso", "*img").Load()
+		filename, err := dialog.File().Title("Select image to flash").SetStartDir(homedir).Filter("Disk image file", "raw", "iso", "img", "dmg").Load()
 		if err != nil && err.Error() != "Cancelled" {
 			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
 			return

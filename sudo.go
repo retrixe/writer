@@ -67,7 +67,7 @@ func elevatedMacCommand(name string, args ...string) (*exec.Cmd, error) {
 	}
 	command := "exec " + name
 	for _, arg := range args {
-		command += ` \"` + strings.ReplaceAll(arg, `"`, `\\"`) + `\"`
+		command += ` \"` + strings.ReplaceAll(arg, `"`, `\\\"`) + `\"`
 	}
 	cmd := exec.Command(
 		osascript,
