@@ -50,12 +50,8 @@ func GetDevices() ([]Device, error) {
 			Name:  disk["Device Node"],
 			Size:  splitDiskSize[0] + " " + splitDiskSize[1],
 			Bytes: bytes,
+			Model: disk["Device / Media Name"],
 		}
-
-		if len(disk) >= 4 && disk["Device / Media Name"] != "" {
-			device.Model = disk["Device / Media Name"]
-		}
-
 		disks = append(disks, device)
 	}
 

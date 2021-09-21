@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, macos-latest]
+        os: [ubuntu-18.04, macos-latest, windows-latest]
     steps:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
@@ -27,11 +27,11 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
-#    - name: Download DLLs for Windows
-#      run: >
-#        C:\msys64\usr\bin\wget.exe https://github.com/webview/webview_csharp/raw/master/libs/webview.dll
-#        https://github.com/webview/webview_csharp/raw/master/libs/WebView2Loader.dll
-#      if: ${{ success() && matrix.os == 'windows-latest' }}
+    - name: Download DLLs for Windows
+      run: >
+        C:\msys64\usr\bin\wget.exe https://github.com/webview/webview_csharp/raw/master/libs/webview.dll
+        https://github.com/webview/webview_csharp/raw/master/libs/WebView2Loader.dll
+      if: ${{ success() && matrix.os == 'windows-latest' }}
 
     - name: Install dependencies on Ubuntu
       run: |
@@ -63,6 +63,10 @@ jobs:
     - name: Build
       run: yarn build
 
+    - name: Build Windows UAC Launcher
+      run: go build -ldflags="-s -w -H launcher" -o launcher.exe -v launcher.go
+      if: ${{ success() && matrix.os == 'windows-latest' }}
+
 #    - name: Test
 #      run: go test -v .
     
@@ -83,12 +87,13 @@ jobs:
         name: writer-macos
         path: writer
 
-#    - name: Upload a Build Artifact (Windows)
-#      uses: actions/upload-artifact@v2.1.4
-#      if: ${{ success() && matrix.os == 'windows-latest' }}
-#      with:
-#        name: writer-windows
-#        path: |
-#          writer.exe
-#          webview.dll
-#          WebView2Loader.dll
+    - name: Upload a Build Artifact (Windows)
+      uses: actions/upload-artifact@v2.1.4
+      if: ${{ success() && matrix.os == 'windows-latest' }}
+      with:
+        name: writer-windows
+        path: |
+          launcher.exe
+          writer.exe
+          webview.dll
+          WebView2Loader.dll
