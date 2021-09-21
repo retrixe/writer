@@ -36,7 +36,7 @@ const html = `
 </html>
 `
 
-const version = "1.0.0-alpha.1"
+const version = "1.0.0-alpha.2"
 
 var w webview.WebView
 
