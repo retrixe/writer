@@ -4590,6 +4590,16 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"run-script-os@npm:^1.1.6":
+  version: 1.1.6
+  resolution: "run-script-os@npm:1.1.6"
+  bin:
+    run-os: index.js
+    run-script-os: index.js
+  checksum: 4800bdcb97df3bd551a02bd1d1c969b4d1ec36ce159fef442333ef9fc0690664849f83c8c85e15a34c007390233702a7a2c87a21846d2c60428c1208c3eaf329
+  languageName: node
+  linkType: hard
+
 "safe-buffer@npm:^5.1.0":
   version: 5.2.1
   resolution: "safe-buffer@npm:5.2.1"
@@ -5282,6 +5292,7 @@ resolve@^2.0.0-next.3:
     react: ^17.0.2
     react-dom: ^17.0.2
     regenerator-runtime: ^0.13.9
+    run-script-os: ^1.1.6
     webpack: ^5.53.0
     webpack-cli: ^4.8.0
   languageName: unknown

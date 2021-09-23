@@ -10,7 +10,7 @@ import (
 
 // IsElevated returns if the application is running with elevated privileges.
 func IsElevated() bool {
-	if runtime.GOOS == "windows" {
+	if runtime.GOOS == "windows" { // https://stackoverflow.com/a/59147866
 		f, err := os.Open("\\\\.\\PHYSICALDRIVE0")
 		if f != nil {
 			defer f.Close()
@@ -57,7 +57,7 @@ func elevatedLinuxCommand(name string, arg ...string) (*exec.Cmd, error) {
 	// authorization could not be obtained because the user dismissed the
 	// authentication dialog, pkexec exits with a return value of 126."
 	// pkexec's internal agent is text based, so disable it as this is a GUI.
-	args := []string{"--disable-internal-agent", name}
+	args := []string{"--disable-internal-agent", name} // env DISPLAY=$ XAUTHORITY=$ name
 	cmd := exec.Command(pkexec, append(args, arg...)...)
 	return cmd, nil
 }

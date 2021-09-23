@@ -11,10 +11,12 @@
     "lint": "eslint .",
     "start": "webpack && yarn start:go",
     "start:go": "go run .",
-    "build": "yarn build:js && yarn build:go",
-    "build:windows": "yarn build:js && yarn build:gowindows && yarn build:launcher",
-    "build:go": "go build -ldflags=\"-s -w\" -o writer -v",
-    "build:gowindows": "go build -ldflags=\"-s -w -H windowsgui\" -o writer.exe -v",
+    "build": "run-script-os",
+    "build:default": "yarn build:js && yarn build:go",
+    "build:windows": "yarn build:js && yarn build:go && yarn build:launcher",
+    "build:go": "run-script-os",
+    "build:go:default": "go build -ldflags=\"-s -w\" -o writer -v",
+    "build:go:windows": "go build -ldflags=\"-s -w -H windowsgui\" -o writer.exe -v",
     "build:launcher": "go build -tags launcher -ldflags=\"-s -w\" -o launcher.exe -v launcher.go",
     "build:js": "webpack",
     "dev": "webpack --watch --env NODE_ENV=development"
@@ -44,6 +46,7 @@
     "eslint-plugin-react": "^7.25.3",
     "eslint-plugin-react-hooks": "^4.2.0",
     "regenerator-runtime": "^0.13.9",
+    "run-script-os": "^1.1.6",
     "webpack": "^5.53.0",
     "webpack-cli": "^4.8.0"
   }

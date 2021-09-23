@@ -62,11 +62,6 @@ jobs:
 
     - name: Build
       run: yarn build
-      if: ${{ success() && matrix.os != 'windows-latest' }}
-
-    - name: Build for Windows (including UAC launcher)
-      run: yarn build:windows
-      if: ${{ success() && matrix.os == 'windows-latest' }}
 
 #    - name: Test
 #      run: go test -v .
