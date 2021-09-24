@@ -3,6 +3,8 @@
 package main
 
 import (
+	"bufio"
+	"io"
 	"os"
 	"os/exec"
 	"strconv"
@@ -59,6 +61,13 @@ func ParseToJsString(s string) string {
 func main() {
 	if len(os.Args) >= 2 && (os.Args[1] == "-v" || os.Args[1] == "--version") {
 		println("writer version v" + version)
+		return
+	} else if len(os.Args) >= 2 && os.Args[1] == "dd" {
+		if len(os.Args) != 4 {
+			println("Invalid usage: writer dd <file> <dest>")
+			os.Exit(1)
+		}
+		runDd()
 		return
 	}
 	debug := false
@@ -170,28 +179,95 @@ func main() {
 	})
 
 	w.Bind("cancelFlash", func() {
-		// TODO: This is terrible. Restrict to *nix when Windows support is added.
-		// We should eventually replicate sudo inside writer itself?
-		err := currentDdProcess.Process.Kill()
-		if err == nil {
-			cancelled = true
-			w.Dispatch(func() { w.Eval("setProgressReact(\"Cancelled the operation!\")") })
-		}
-		cmd, err := ElevatedCommand("kill", "-9", strconv.Itoa(currentDdProcess.Process.Pid))
+		pipe, err := currentDdProcess.StdinPipe()
 		if err != nil {
 			w.Dispatch(func() { w.Eval("setProgressReact(\"Error occurred when cancelling.\")") })
-			return
 		}
-		_, err = cmd.Output()
-		if err != nil {
-			w.Dispatch(func() { w.Eval("setProgressReact(\"Error occurred when cancelling.\")") })
-			return
-		} else {
-			cancelled = true
-			w.Dispatch(func() { w.Eval("setProgressReact(\"Cancelled the operation!\")") })
-		}
+		pipe.Write([]byte("stop\n"))
+		w.Dispatch(func() { w.Eval("setProgressReact(\"Cancelled the operation!\")") })
 	})
 
 	w.Navigate("data:text/html," + html)
 	w.Run()
 }
+
+func runDd() {
+	cmd := exec.Command(
+		"dd", "if="+os.Args[2], "of="+os.Args[3], "status=progress", "bs=1M", "conv=fdatasync")
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		panic(err)
+	}
+	go io.Copy(os.Stdout, stdout)
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		panic(err)
+	}
+	go io.Copy(os.Stderr, stderr)
+	err = cmd.Start()
+	if err != nil {
+		panic(err)
+	}
+	quit := make(chan bool, 1)
+	go (func() {
+		reader := bufio.NewReader(os.Stdin)
+		for {
+			select {
+			case <-quit:
+				return
+			default:
+				text, err := reader.ReadString('\n')
+				if strings.TrimSpace(text) == "stop" {
+					cmd.Process.Kill()
+				}
+				if err != nil {
+					return
+				}
+			}
+		}
+	})()
+	err = cmd.Wait()
+	quit <- true
+	if err != nil && cmd.ProcessState.ExitCode() != 0 {
+		os.Exit(cmd.ProcessState.ExitCode())
+	} else if err != nil {
+		panic(err)
+	}
+}
+
+/*
+// 5335 bytes (5.3 kB, 5.2 KiB) copied, 0.00908493 s, 587 kB/s
+filePath, err := filepath.Abs(os.Args[1])
+if err != nil {log.Fatalln("Unable to resolve path to file.")}
+destPath, err := filepath.Abs(os.Args[2])
+if err != nil {log.Fatalln("Unable to resolve path to dest.")}
+file, err := os.Open(filePath)
+if err != nil && os.IsNotExist(err) {log.Fatalln("This file does not exist!")}
+else if err != nil {log.Fatalln("An error occurred while opening the file.")}
+defer file.Close()
+fileStat, err := file.Stat()
+if err != nil {log.Fatalln("An error occurred while opening the file.")}
+else if !fileStat.Mode().IsRegular() {log.Fatalln("The specified file is not a regular file!")}
+// TODO: Untested on macOS or other platforms.
+dest, err := os.OpenFile(destPath, os.O_RDWR|os.O_EXCL|os.O_CREATE, os.ModePerm)
+if err != nil {log.Fatalln("An error occurred while opening the dest.")}
+defer dest.Close()
+destStat, err := dest.Stat()
+if err != nil {log.Fatalln("An error occurred while opening the file.")}
+else if destStat.Mode().IsDir() {log.Fatalln("The specified destination is a directory!")}
+var total int
+for {
+	data := make([]byte, 4096) // TODO: Has to be 512 on Windows.
+	n1, err := file.Read(data)
+	if err != nil {
+		if io.EOF == err {break}
+		else {log.Panicln("Encountered error while reading file!")}
+	}
+	n2, err := dest.Write(data[0:n1])
+	if err != nil {log.Panicln("Encountered error while writing to dest!")}
+	else if n2 != n1 {log.Panicln("Read/write mismatch! Is the dest too small!")}
+	total += n1
+} // TODO: Print progress.
+err = dest.Sync()
+if err != nil {log.Fatalln("Failed to sync writes to disk!")}
+*/

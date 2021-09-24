@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"io"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -19,7 +20,11 @@ type DdProgress struct {
 // CopyConvert is a wrapper around the `dd` Unix utility.
 func CopyConvert(iff string, of string) (chan DdProgress, *exec.Cmd, error) {
 	channel := make(chan DdProgress)
-	cmd, err := ElevatedCommand("dd", "if="+iff, "of="+of, "status=progress", "bs=1M", "conv=fdatasync")
+	executable, err := os.Executable()
+	if err != nil {
+		return nil, nil, err
+	}
+	cmd, err := ElevatedCommand(executable, "dd", iff, of)
 	if err != nil {
 		return nil, nil, err
 	}

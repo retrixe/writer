@@ -57,7 +57,9 @@ func elevatedLinuxCommand(name string, arg ...string) (*exec.Cmd, error) {
 	// authorization could not be obtained because the user dismissed the
 	// authentication dialog, pkexec exits with a return value of 126."
 	// pkexec's internal agent is text based, so disable it as this is a GUI.
-	args := []string{"--disable-internal-agent", name} // env DISPLAY=$ XAUTHORITY=$ name
+	display := "DISPLAY=" + os.Getenv("DISPLAY")
+	xauthority := "XAUTHORITY=" + os.Getenv("XAUTHORITY")
+	args := []string{"--disable-internal-agent", "env", display, xauthority, name}
 	cmd := exec.Command(pkexec, append(args, arg...)...)
 	return cmd, nil
 }
