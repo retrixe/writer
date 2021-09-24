@@ -5,9 +5,9 @@ import (
 	"bytes"
 	"io"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 // DdProgress is a struct containing progress of the dd operation.
@@ -18,13 +18,17 @@ type DdProgress struct {
 }
 
 // CopyConvert is a wrapper around the `dd` Unix utility.
-func CopyConvert(iff string, of string) (chan DdProgress, *exec.Cmd, error) {
+func CopyConvert(iff string, of string) (chan DdProgress, io.WriteCloser, error) {
 	channel := make(chan DdProgress)
 	executable, err := os.Executable()
 	if err != nil {
 		return nil, nil, err
 	}
 	cmd, err := ElevatedCommand(executable, "dd", iff, of)
+	if err != nil {
+		return nil, nil, err
+	}
+	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -36,6 +40,8 @@ func CopyConvert(iff string, of string) (chan DdProgress, *exec.Cmd, error) {
 		return nil, nil, err
 	}
 	// Wait for command to exit.
+	channelClosed := false
+	var mutex sync.Mutex
 	go (func() {
 		defer input.Close()
 		err := cmd.Wait()
@@ -44,6 +50,9 @@ func CopyConvert(iff string, of string) (chan DdProgress, *exec.Cmd, error) {
 				Error: err,
 			}
 		}
+		mutex.Lock()
+		defer mutex.Unlock()
+		channelClosed = true
 		close(channel)
 	})()
 	// Read the output line by line.
@@ -58,14 +67,19 @@ func CopyConvert(iff string, of string) (chan DdProgress, *exec.Cmd, error) {
 				// TODO: Probably handle error, but we can't tell full dd behavior without seeing the code.
 				bytes, _ := strconv.Atoi(text[:firstSpace])
 				split := strings.Split(text, ", ")
+				mutex.Lock()
+				if channelClosed {
+					return // We don't need to unlock as no deadlock is caused here.
+				}
 				channel <- DdProgress{
 					Bytes: bytes,
 					Speed: split[len(split)-1],
 				}
+				mutex.Unlock()
 			}
 		}
 	})()
-	return channel, cmd, nil
+	return channel, stdin, nil
 }
 
 // dropCR drops a terminal \r from the data.

@@ -13,8 +13,8 @@ const App = () => {
   const [dialog, setDialog] = useState('')
   const [confirm, setConfirm] = useState(false)
   const [devices, setDevices] = useState(['N/A'])
-  const [progress, setProgress] = useState(0)
   const [fileSize, setFileSize] = useState(0)
+  const [progress, setProgress] = useState(null)
   const [selectedDevice, setSelectedDevice] = useState('N/A')
   // useEffect(() => window.setFileGo(file), [file])
   useEffect(() => window.refreshDevices(), [])
@@ -26,7 +26,7 @@ const App = () => {
   window.setFileSizeReact = setFileSize
   window.setSelectedDeviceReact = setSelectedDevice
 
-  const inProgress = !!progress && typeof progress === 'number'
+  const inProgress = typeof progress === 'number'
   useEffect(() => setConfirm(false), [inProgress])
   const onFlashButtonClick = () => {
     if (inProgress) { // TODO: A dialog would be better.
@@ -36,7 +36,7 @@ const App = () => {
       } else setConfirm(true)
       return
     }
-    setProgress(0)
+    setProgress(null)
     if (selectedDevice === 'N/A') return setDialog('Error: Select a device to flash the ISO to!')
     if (!file) return setDialog('Error: Select an ISO to flash to a device!')
     if (BigInt(fileSize) > BigInt(selectedDevice.split(' ')[0])) {

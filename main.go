@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"sync"
 
 	_ "embed"
 
@@ -132,9 +133,11 @@ func main() {
 	})
 
 	// Bind flashing.
-	var currentDdProcess *exec.Cmd
+	var inputPipe io.WriteCloser
 	var cancelled bool = false
+	var mutex sync.Mutex
 	w.Bind("flash", func(file string, selectedDevice string) {
+		cancelled = false
 		stat, err := os.Stat(file)
 		if err != nil {
 			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
@@ -145,20 +148,26 @@ func main() {
 		} else {
 			w.Eval("setFileSizeReact(" + strconv.Itoa(int(stat.Size())) + ")")
 		}
-		channel, dd, err := CopyConvert(file, selectedDevice)
-		currentDdProcess = dd
+		channel, stdin, err := CopyConvert(file, selectedDevice)
+		inputPipe = stdin
 		if err != nil {
 			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
 			return
+		} else {
+			w.Eval("setSpeedReact(" + ParseToJsString("0 MB/s") + ")") // Show progress instantly.
+			w.Eval("setProgressReact(0)")
 		}
 		go (func() {
 			errored := false
 			for {
 				progress, ok := <-channel
+				mutex.Lock()
 				if cancelled {
-					cancelled = false
+					defer mutex.Unlock()
 					return
-				} else if ok {
+				}
+				mutex.Unlock()
+				if ok {
 					w.Dispatch(func() {
 						if progress.Error != nil { // Error is always the last emitted.
 							errored = true
@@ -179,12 +188,15 @@ func main() {
 	})
 
 	w.Bind("cancelFlash", func() {
-		pipe, err := currentDdProcess.StdinPipe()
+		_, err := inputPipe.Write([]byte("stop\n"))
 		if err != nil {
 			w.Dispatch(func() { w.Eval("setProgressReact(\"Error occurred when cancelling.\")") })
+		} else {
+			mutex.Lock()
+			defer mutex.Unlock()
+			cancelled = true
+			w.Dispatch(func() { w.Eval("setProgressReact(\"Cancelled the operation!\")") })
 		}
-		pipe.Write([]byte("stop\n"))
-		w.Dispatch(func() { w.Eval("setProgressReact(\"Cancelled the operation!\")") })
 	})
 
 	w.Navigate("data:text/html," + html)
