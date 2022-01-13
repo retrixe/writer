@@ -21,6 +21,7 @@
     "build:js": "webpack",
     "dev": "webpack --watch --env NODE_ENV=development"
   },
+  "packageManager": "yarn@3.0.2",
   "dependencies": {
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
