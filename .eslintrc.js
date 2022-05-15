@@ -3,7 +3,7 @@ module.exports = {
     es6: true,
     browser: true
   },
-  extends: ['plugin:react/recommended', 'standard', 'standard-react', 'standard-jsx'],
+  extends: ['plugin:react/recommended', 'plugin:react-hooks/recommended', 'standard', 'standard-react', 'standard-jsx'],
   plugins: ['react-hooks'],
   ignorePatterns: ['.eslintrc.js', 'dist', '.yarn/*', '.pnp.*'],
   parserOptions: {
@@ -11,9 +11,5 @@ module.exports = {
     sourceType: 'module',
     ecmaFeatures: { jsx: true }
   },
-  rules: {
-    // React Hooks rules.
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn'
-  }
+  rules: {}
 }

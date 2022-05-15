@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import { createRoot } from 'react-dom/client'
 import { css } from '@emotion/react'
-import ReactDOM from 'react-dom'
 import Dialog from './dialog'
 
 const floor = num => Math.floor(num * 100) / 100
@@ -90,4 +90,4 @@ const App = () => {
   )
 }
 
-ReactDOM.render(<App />, document.getElementById('app'))
+createRoot(document.getElementById('app')).render(<App />)

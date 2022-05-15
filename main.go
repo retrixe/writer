@@ -45,7 +45,7 @@ const version = "1.0.0-alpha.2"
 
 var w webview.WebView
 
-//go:embed dist/main.js
+//go:embed dist/index.js
 var js string
 
 // var file = ""
