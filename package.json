@@ -2,40 +2,50 @@
   "name": "writer",
   "version": "1.0.0-alpha.2",
   "description": "The HTML/CSS/JS component of writer.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "repository": "https://github.com/retrixe/writer.git",
   "author": "retrixe",
   "license": "Apache-2.0",
   "private": true,
+  "engines": {
+    "browsers": "ie >= 9"
+  },
+  "targets": {
+    "main": {
+      "context": "browser",
+      "sourceMap": {
+        "inline": true,
+        "inlineSources": true
+      },
+      "includeNodeModules": true
+    }
+  },
   "scripts": {
     "lint": "eslint .",
     "start": "yarn build:js && yarn start:go",
     "start:go": "go run .",
     "build": "run-script-os",
-    "build:default": "yarn build:js && yarn build:go",
-    "build:windows": "yarn build:js && yarn build:go && yarn build:launcher",
+    "build:default": "yarn build:js --no-source-maps && yarn build:go",
+    "build:windows": "yarn build:default && yarn build:launcher",
     "build:go": "run-script-os",
     "build:go:default": "go build -ldflags=\"-s -w\" -o writer -v",
     "build:go:windows": "go build -ldflags=\"-s -w -H windowsgui\" -o writer.exe -v",
     "build:launcher": "go build -tags launcher -ldflags=\"-s -w\" -o launcher.exe -v launcher.go",
-    "build:js": "webpack",
-    "dev": "webpack --watch --env NODE_ENV=development"
+    "build:js": "parcel build src/index.js"
   },
   "packageManager": "yarn@3.2.1",
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@mui/material": "^5.7.0",
+    "@swc/helpers": "^0.3.13",
     "prop-types": "^15.7.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.10",
-    "@babel/preset-env": "^7.17.10",
-    "@babel/preset-react": "^7.16.7",
-    "babel-loader": "^8.2.5",
-    "core-js": "^3.22.5",
+    "@emotion/babel-plugin": "^11.9.2",
     "eslint": "^8.15.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-config-standard-jsx": "^11.0.0",
@@ -46,9 +56,7 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.5.0",
-    "regenerator-runtime": "^0.13.9",
-    "run-script-os": "^1.1.6",
-    "webpack": "^5.72.1",
-    "webpack-cli": "^4.9.2"
+    "parcel": "^2.5.0",
+    "run-script-os": "^1.1.6"
   }
 }
