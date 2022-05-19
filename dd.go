@@ -17,7 +17,13 @@ type DdProgress struct {
 	Speed string
 }
 
-// CopyConvert is a wrapper around the `dd` Unix utility.
+// CopyConvert executes the `dd` Unix utility and provides its output.
+//
+// Technically, this isn't true anymore, it executes writer itself
+// with some special parameters as admin. The new writer process
+// wraps `dd` and accepts "stop\n" stdin to terminate dd. This is
+// because killing the process doesn't work with pkexec/osascript,
+// and this approach enables us to reimplement dd fully.
 func CopyConvert(iff string, of string) (chan DdProgress, io.WriteCloser, error) {
 	channel := make(chan DdProgress)
 	executable, err := os.Executable()
