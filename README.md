@@ -1,3 +1,3 @@
 # writer
 
-An image writer to flash images to a USB drive on Linux/macOS with a small binary and an intuitive GUI. Wraps dd.
+An small, intuitive app to flash ISOs and disk images to external drives e.g. USB drives.

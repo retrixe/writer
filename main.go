@@ -17,7 +17,8 @@ import (
 	"github.com/webview/webview"
 )
 
-// TODO: Design UI (with live warnings/errors). Validate written image?
+// TODO: Design UI (with live warnings/errors).
+// TODO: Validate written image?
 // LOW-TODO: Future support for flashing to an internal drive?
 
 const html = `

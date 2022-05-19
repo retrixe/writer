@@ -36,6 +36,7 @@ func ElevatedCommand(name string, arg ...string) (*exec.Cmd, error) {
 	if IsElevated() {
 		return exec.Command(name, arg...), nil
 	} else if runtime.GOOS == "windows" {
+		// https://stackoverflow.com/questions/31558066/how-to-ask-for-administer-privileges-on-windows-with-go
 		return nil, ErrWindowsNoOp
 	} else if runtime.GOOS == "darwin" {
 		return elevatedMacCommand(name, arg...)
