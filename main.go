@@ -63,11 +63,16 @@ func main() {
 		println("writer version v" + version)
 		return
 	} else if len(os.Args) >= 2 && os.Args[1] == "dd" {
-		if len(os.Args) != 4 {
-			println("Invalid usage: writer dd <file> <destination>")
+		if len(os.Args) < 4 {
+			println("Invalid usage: writer dd <file> <destination> (--experimental-custom-dd)")
 			os.Exit(1)
 		}
-		RunDd(os.Args[2], os.Args[3])
+		// UnmountDevice(os.Args[3])
+		if os.Args[4] == "--experimental-custom-dd" {
+			FlashFileToBlockDevice(os.Args[2], os.Args[3])
+		} else {
+			RunDd(os.Args[2], os.Args[3])
+		}
 		return
 	}
 	debug := false

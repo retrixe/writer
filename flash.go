@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -57,8 +58,8 @@ func RunDd(iff string, of string) {
 	}
 }
 
-// TODO: Convert log.Fatalln to errors.
-// TODO: When you use this in writer, display stdout to user.
+// FlashFileToBlockDevice is a re-implementation of dd
+// in Golang to work cross-platform on Windows as well.
 func FlashFileToBlockDevice(iff string, of string) {
 	// References to use:
 	// https://stackoverflow.com/questions/21032426/low-level-disk-i-o-in-golang
@@ -84,9 +85,7 @@ func FlashFileToBlockDevice(iff string, of string) {
 	} else if !fileStat.Mode().IsRegular() {
 		log.Fatalln("The specified file is not a regular file!")
 	}
-	// TODO: Untested on macOS or Windows.
-	// TODO: Why was os.O_RDWR|os.O_EXCL|os.O_CREATE used?
-	dest, err := os.OpenFile(destPath, os.O_WRONLY, os.ModePerm)
+	dest, err := os.OpenFile(destPath, os.O_WRONLY, os.ModePerm) // os.O_RDWR|os.O_EXCL|os.O_CREATE
 	if err != nil {
 		log.Fatalln("An error occurred while opening the dest.", err)
 	}
@@ -97,11 +96,15 @@ func FlashFileToBlockDevice(iff string, of string) {
 	} else if destStat.Mode().IsDir() {
 		log.Fatalln("The specified destination is a directory!")
 	}
+	bs := 4096
+	if runtime.GOOS == "windows" {
+		bs = 512 // TODO: Is this true?
+	}
 	timer := time.NewTimer(time.Second)
 	startTime := time.Now().UnixMilli()
 	var total int
 	for {
-		data := make([]byte, 4096) // TODO: Has to be 512 on Windows.
+		data := make([]byte, bs)
 		n1, err := file.Read(data)
 		if err != nil {
 			if io.EOF == err {
@@ -128,13 +131,14 @@ func FlashFileToBlockDevice(iff string, of string) {
 			timer.Reset(time.Second)
 		}
 	}
-	timeDifference := time.Now().UnixMilli() - startTime
-	println(strconv.Itoa(total) + " bytes " +
-		"(" + BytesToString(total, false) + ", " + BytesToString(total, true) + ") copied, " +
-		strconv.FormatFloat(float64(timeDifference)/1000, 'f', 3, 64) + " s, " +
-		BytesToString(total/(int(timeDifference)/1000), false) + "/s")
 	err = dest.Sync()
 	if err != nil {
 		log.Fatalln("Failed to sync writes to disk!", err)
+	} else {
+		timeDifference := time.Now().UnixMilli() - startTime
+		println(strconv.Itoa(total) + " bytes " +
+			"(" + BytesToString(total, false) + ", " + BytesToString(total, true) + ") copied, " +
+			strconv.FormatFloat(float64(timeDifference)/1000, 'f', 3, 64) + " s, " +
+			BytesToString(total/(int(timeDifference)/1000), false) + "/s")
 	}
 }

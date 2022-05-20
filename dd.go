@@ -30,7 +30,12 @@ func CopyConvert(iff string, of string) (chan DdProgress, io.WriteCloser, error)
 	if err != nil {
 		return nil, nil, err
 	}
-	cmd, err := ElevatedCommand(executable, "dd", iff, of)
+	// TODO: When using this, display stdout error to user.
+	ddFlag := "--experimental-custom-dd"
+	if os.Getenv("__EXPERIMENTAL_CUSTOM_DD") != "true" {
+		ddFlag = ""
+	}
+	cmd, err := ElevatedCommand(executable, "dd", iff, of, ddFlag)
 	if err != nil {
 		return nil, nil, err
 	}
