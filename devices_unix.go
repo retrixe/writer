@@ -45,7 +45,7 @@ func GetDevices() ([]Device, error) {
 			bytes, _ := strconv.Atoi(disk[2])
 			device := Device{
 				Name:  "/dev/" + disk[0],
-				Size:  bytesToString(bytes),
+				Size:  BytesToString(bytes, false),
 				Bytes: bytes,
 			}
 
@@ -58,22 +58,4 @@ func GetDevices() ([]Device, error) {
 	}
 
 	return disks, nil
-}
-
-func bytesToString(bytes int) string {
-	kb := float64(bytes) / 1000
-	mb := kb / 1000
-	gb := mb / 1000
-	tb := gb / 1000
-	if tb >= 1 {
-		return strconv.FormatFloat(tb, 'f', 1, 64) + "TB"
-	} else if gb >= 1 {
-		return strconv.FormatFloat(gb, 'f', 1, 64) + "GB"
-	} else if mb >= 1 {
-		return strconv.FormatFloat(mb, 'f', 1, 64) + "MB"
-	} else if kb >= 1 {
-		return strconv.FormatFloat(kb, 'f', 1, 64) + "KB"
-	} else {
-		return strconv.Itoa(bytes) + "B"
-	}
 }

@@ -7,7 +7,9 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"time"
 )
 
 // RunDd is a wrapper around the `dd` command. This wrapper behaves
@@ -56,16 +58,16 @@ func RunDd(iff string, of string) {
 }
 
 // TODO: Convert log.Fatalln to errors.
+// TODO: When you use this in writer, display stdout to user.
 func FlashFileToBlockDevice(iff string, of string) {
 	// References to use:
 	// https://stackoverflow.com/questions/21032426/low-level-disk-i-o-in-golang
 	// https://stackoverflow.com/questions/56512227/how-to-read-and-write-low-level-raw-disk-in-windows-and-go
-	// 5335 bytes (5.3 kB, 5.2 KiB) copied, 0.00908493 s, 587 kB/s
-	filePath, err := filepath.Abs(os.Args[1])
+	filePath, err := filepath.Abs(iff)
 	if err != nil {
 		log.Fatalln("Unable to resolve path to file.")
 	}
-	destPath, err := filepath.Abs(os.Args[2])
+	destPath, err := filepath.Abs(of)
 	if err != nil {
 		log.Fatalln("Unable to resolve path to dest.")
 	}
@@ -82,9 +84,9 @@ func FlashFileToBlockDevice(iff string, of string) {
 	} else if !fileStat.Mode().IsRegular() {
 		log.Fatalln("The specified file is not a regular file!")
 	}
-	// TODO: Untested on macOS or other platforms.
-	// TODO: Why os.O_RDWR|os.O_EXCL|os.O_CREATE and not os.O_WRONLY?
-	dest, err := os.OpenFile(destPath, os.O_RDWR|os.O_EXCL|os.O_CREATE, os.ModePerm)
+	// TODO: Untested on macOS or Windows.
+	// TODO: Why was os.O_RDWR|os.O_EXCL|os.O_CREATE used?
+	dest, err := os.OpenFile(destPath, os.O_WRONLY, os.ModePerm)
 	if err != nil {
 		log.Fatalln("An error occurred while opening the dest.", err)
 	}
@@ -95,6 +97,8 @@ func FlashFileToBlockDevice(iff string, of string) {
 	} else if destStat.Mode().IsDir() {
 		log.Fatalln("The specified destination is a directory!")
 	}
+	timer := time.NewTimer(time.Second)
+	startTime := time.Now().UnixMilli()
 	var total int
 	for {
 		data := make([]byte, 4096) // TODO: Has to be 512 on Windows.
@@ -113,7 +117,22 @@ func FlashFileToBlockDevice(iff string, of string) {
 			log.Fatalln("Read/write mismatch! Is the dest too small!")
 		}
 		total += n1
-	} // TODO: Print progress.
+		if len(timer.C) > 0 {
+			// There's some minor differences in output with dd, mainly decimal places and kB vs KB.
+			timeDifference := time.Now().UnixMilli() - startTime
+			print(strconv.Itoa(total) + " bytes " +
+				"(" + BytesToString(total, false) + ", " + BytesToString(total, true) + ") copied, " +
+				strconv.Itoa(int(timeDifference/1000)) + " s, " +
+				BytesToString(total/(int(timeDifference)/1000), false) + "/s\r")
+			<-timer.C
+			timer.Reset(time.Second)
+		}
+	}
+	timeDifference := time.Now().UnixMilli() - startTime
+	println(strconv.Itoa(total) + " bytes " +
+		"(" + BytesToString(total, false) + ", " + BytesToString(total, true) + ") copied, " +
+		strconv.FormatFloat(float64(timeDifference)/1000, 'f', 3, 64) + " s, " +
+		BytesToString(total/(int(timeDifference)/1000), false) + "/s")
 	err = dest.Sync()
 	if err != nil {
 		log.Fatalln("Failed to sync writes to disk!", err)
