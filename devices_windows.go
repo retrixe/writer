@@ -1,6 +1,9 @@
 package main
 
 import (
+	"errors"
+	"io/fs"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -55,4 +58,17 @@ func GetDevices() ([]Device, error) {
 	}
 
 	return disks, nil
+}
+
+// UnmountDevice unmounts a block device's partitons before flashing to it.
+func UnmountDevice(device string) error {
+	// Check if device is mounted.
+	stat, err := os.Stat(device)
+	if err != nil {
+		return err
+	} else if stat.Mode().Type()&fs.ModeDevice == 0 {
+		return errors.New("provided device is not a block device!")
+	}
+	// TODO: Discover device partitions and recursively unmount them.
+	return nil
 }

@@ -31,24 +31,7 @@ func RunDd(iff string, of string) {
 	if err != nil {
 		panic(err)
 	}
-	quit := make(chan bool, 1)
-	go (func() {
-		reader := bufio.NewReader(os.Stdin)
-		for {
-			select {
-			case <-quit:
-				return
-			default:
-				text, err := reader.ReadString('\n')
-				if strings.TrimSpace(text) == "stop" {
-					cmd.Process.Kill()
-				}
-				if err != nil {
-					return
-				}
-			}
-		}
-	})()
+	quit := handleStopInput(func() { cmd.Process.Kill() })
 	err = cmd.Wait()
 	quit <- true
 	if err != nil && cmd.ProcessState.ExitCode() != 0 {
@@ -64,6 +47,7 @@ func FlashFileToBlockDevice(iff string, of string) {
 	// References to use:
 	// https://stackoverflow.com/questions/21032426/low-level-disk-i-o-in-golang
 	// https://stackoverflow.com/questions/56512227/how-to-read-and-write-low-level-raw-disk-in-windows-and-go
+	quit := handleStopInput(func() { os.Exit(0) })
 	filePath, err := filepath.Abs(iff)
 	if err != nil {
 		log.Fatalln("Unable to resolve path to file.")
@@ -141,4 +125,26 @@ func FlashFileToBlockDevice(iff string, of string) {
 			strconv.FormatFloat(float64(timeDifference)/1000, 'f', 3, 64) + " s, " +
 			BytesToString(total/(int(timeDifference)/1000), false) + "/s")
 	}
+	quit <- true
+}
+
+func handleStopInput(cancel func()) chan bool {
+	quit := make(chan bool, 1)
+	go (func() {
+		reader := bufio.NewReader(os.Stdin)
+		for {
+			select {
+			case <-quit:
+				return
+			default:
+				text, err := reader.ReadString('\n')
+				if strings.TrimSpace(text) == "stop" {
+					cancel()
+				} else if err != nil {
+					return
+				}
+			}
+		}
+	})()
+	return quit
 }

@@ -16,7 +16,7 @@ import (
 )
 
 // TODO: Design UI (with live warnings/errors).
-// TODO: Validate written image?
+// TODO: Validate written image.
 // LOW-TODO: Future support for flashing to an internal drive?
 
 const html = `
@@ -67,7 +67,9 @@ func main() {
 			println("Invalid usage: writer dd <file> <destination> (--experimental-custom-dd)")
 			os.Exit(1)
 		}
-		// UnmountDevice(os.Args[3])
+		if err := UnmountDevice(os.Args[3]); err != nil {
+			panic(err)
+		}
 		if os.Args[4] == "--experimental-custom-dd" {
 			FlashFileToBlockDevice(os.Args[2], os.Args[3])
 		} else {
