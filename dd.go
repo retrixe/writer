@@ -17,6 +17,20 @@ type DdProgress struct {
 	Speed string
 }
 
+// DdError is a struct containing dd errors.
+type DdError struct {
+	Message string
+	Err     error
+}
+
+func (err *DdError) Error() string {
+	output := strings.TrimSpace(err.Message)
+	if output == "" {
+		return err.Err.Error()
+	}
+	return err.Err.Error() + ": " + output
+}
+
 // CopyConvert executes the `dd` Unix utility and provides its output.
 //
 // Technically, this isn't true anymore, it executes writer itself
@@ -30,7 +44,6 @@ func CopyConvert(iff string, of string) (chan DdProgress, io.WriteCloser, error)
 	if err != nil {
 		return nil, nil, err
 	}
-	// TODO: When using this, display stdout error to user.
 	ddFlag := "--experimental-custom-dd"
 	if os.Getenv("__EXPERIMENTAL_CUSTOM_DD") != "true" {
 		ddFlag = ""
@@ -51,14 +64,18 @@ func CopyConvert(iff string, of string) (chan DdProgress, io.WriteCloser, error)
 		return nil, nil, err
 	}
 	// Wait for command to exit.
+	lastLine := ""
 	channelClosed := false
 	var mutex sync.Mutex
 	go (func() {
 		defer input.Close()
 		err := cmd.Wait()
 		if err != nil {
+			if ddFlag == "" {
+				lastLine = ""
+			}
 			channel <- DdProgress{
-				Error: err,
+				Error: &DdError{Message: lastLine, Err: err},
 			}
 		}
 		mutex.Lock()
@@ -73,6 +90,7 @@ func CopyConvert(iff string, of string) (chan DdProgress, io.WriteCloser, error)
 		for scanner.Scan() {
 			text := scanner.Text()
 			println(text)
+			lastLine = text
 			firstSpace := strings.Index(text, " ")
 			if firstSpace != -1 && strings.HasPrefix(text[firstSpace+1:], "bytes (") {
 				// TODO: Probably handle error, but we can't tell full dd behavior without seeing the code.

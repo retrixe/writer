@@ -4,6 +4,7 @@ package main
 
 import (
 	"io"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -63,12 +64,15 @@ func main() {
 		println("writer version v" + version)
 		return
 	} else if len(os.Args) >= 2 && os.Args[1] == "dd" {
+		log.SetFlags(0)
+		log.SetOutput(os.Stderr)
+		log.SetPrefix("[flash] ")
 		if len(os.Args) < 4 {
 			println("Invalid usage: writer dd <file> <destination> (--experimental-custom-dd)")
 			os.Exit(1)
 		}
 		if err := UnmountDevice(os.Args[3]); err != nil {
-			panic(err)
+			log.Fatalln(err)
 		}
 		if os.Args[4] == "--experimental-custom-dd" {
 			FlashFileToBlockDevice(os.Args[2], os.Args[3])
