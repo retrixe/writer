@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { css } from '@emotion/react'
+import JSBI from 'jsbi'
 import Dialog from './dialog'
 
 declare global { /* eslint-disable no-var */
@@ -56,7 +57,7 @@ const App = (): JSX.Element => {
     setProgress(null)
     if (selectedDevice === 'N/A') return setDialog('Error: Select a device to flash the ISO to!')
     if (file === '') return setDialog('Error: Select an ISO to flash to a device!')
-    if (BigInt(fileSize) > BigInt(selectedDevice.split(' ')[0])) {
+    if (JSBI.greaterThan(JSBI.BigInt(fileSize), JSBI.BigInt(selectedDevice.split(' ')[0]))) {
       return setDialog('Error: The ISO file is too big to fit on the selected drive!')
     }
     if (!confirm) return setConfirm(true)
@@ -66,7 +67,9 @@ const App = (): JSX.Element => {
   const onFileInputChange: React.ChangeEventHandler<HTMLTextAreaElement> =
     (event) => setFile(event.target.value.replace(/\n/g, ''))
 
-  const progressPercent = inProgress ? BigInt(progress) * BigInt(100) / BigInt(fileSize) : 0
+  const progressPercent = inProgress
+    ? JSBI.divide(JSBI.multiply(JSBI.BigInt(progress), JSBI.BigInt(100)), JSBI.BigInt(fileSize))
+    : JSBI.BigInt(0)
   return (
     <>
       {dialog !== '' && (
