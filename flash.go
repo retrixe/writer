@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"io"
 	"log"
 	"os"
@@ -12,6 +13,9 @@ import (
 	"strings"
 	"time"
 )
+
+// ErrNotBlockDevice is returned when the specified device is not a block device.
+var ErrNotBlockDevice = errors.New("provided device is not a block device!")
 
 // RunDd is a wrapper around the `dd` command. This wrapper behaves
 // identically to dd, but accepts stdin input "stop\n".
@@ -119,11 +123,11 @@ func FlashFileToBlockDevice(iff string, of string) {
 	if err != nil {
 		log.Fatalln("Failed to sync writes to disk!", err)
 	} else {
-		timeDifference := time.Now().UnixMilli() - startTime
+		timeDifference := float64(time.Now().UnixMilli()-startTime) / 1000
 		println(strconv.Itoa(total) + " bytes " +
 			"(" + BytesToString(total, false) + ", " + BytesToString(total, true) + ") copied, " +
-			strconv.FormatFloat(float64(timeDifference)/1000, 'f', 3, 64) + " s, " +
-			BytesToString(total/(int(timeDifference)/1000), false) + "/s")
+			strconv.FormatFloat(timeDifference, 'f', 3, 64) + " s, " +
+			BytesToString(int(float64(total)/timeDifference), false) + "/s")
 	}
 	quit <- true
 }

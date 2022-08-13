@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"io/fs"
 	"os"
 	"os/exec"
@@ -68,7 +67,7 @@ func UnmountDevice(device string) error {
 	if err != nil {
 		return err
 	} else if stat.Mode().Type()&fs.ModeDevice == 0 {
-		return errors.New("provided device is not a block device!")
+		return ErrNotBlockDevice
 	}
 	// TODO: Discover device partitions and recursively unmount them.
 	return nil

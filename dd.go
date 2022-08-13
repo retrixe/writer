@@ -44,9 +44,9 @@ func CopyConvert(iff string, of string) (chan DdProgress, io.WriteCloser, error)
 	if err != nil {
 		return nil, nil, err
 	}
-	ddFlag := "--experimental-custom-dd"
-	if os.Getenv("__EXPERIMENTAL_CUSTOM_DD") != "true" {
-		ddFlag = ""
+	ddFlag := ""
+	if os.Getenv("__USE_SYSTEM_DD") == "true" {
+		ddFlag = "--use-system-dd"
 	}
 	cmd, err := ElevatedCommand(executable, "dd", iff, of, ddFlag)
 	if err != nil {
@@ -93,7 +93,8 @@ func CopyConvert(iff string, of string) (chan DdProgress, io.WriteCloser, error)
 			lastLine = text
 			firstSpace := strings.Index(text, " ")
 			if firstSpace != -1 && strings.HasPrefix(text[firstSpace+1:], "bytes (") {
-				// TODO: Probably handle error, but we can't tell full dd behavior without seeing the code.
+				// LOW-TODO: Probably handle error, but we can't tell full dd behavior without seeing the code.
+				// Well, custom dd is the default now anyways.
 				bytes, _ := strconv.Atoi(text[:firstSpace])
 				split := strings.Split(text, ", ")
 				mutex.Lock()

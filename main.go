@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -63,21 +64,24 @@ func main() {
 	if len(os.Args) >= 2 && (os.Args[1] == "-v" || os.Args[1] == "--version") {
 		println("writer version v" + version)
 		return
-	} else if len(os.Args) >= 2 && os.Args[1] == "dd" {
+	} else if len(os.Args) >= 2 && os.Args[1] == "flash" {
 		log.SetFlags(0)
 		log.SetOutput(os.Stderr)
 		log.SetPrefix("[flash] ")
 		if len(os.Args) < 4 {
-			println("Invalid usage: writer dd <file> <destination> (--experimental-custom-dd)")
+			println("Invalid usage: writer flash <file> <destination> (--use-system-dd)")
 			os.Exit(1)
 		}
 		if err := UnmountDevice(os.Args[3]); err != nil {
-			log.Fatalln(err)
+			log.Println(err)
+			if !strings.HasSuffix(os.Args[3], "debug.iso") {
+				os.Exit(1)
+			}
 		}
-		if os.Args[4] == "--experimental-custom-dd" {
-			FlashFileToBlockDevice(os.Args[2], os.Args[3])
-		} else {
+		if len(os.Args) > 4 && os.Args[4] == "--use-system-dd" {
 			RunDd(os.Args[2], os.Args[3])
+		} else {
+			FlashFileToBlockDevice(os.Args[2], os.Args[3])
 		}
 		return
 	}
@@ -102,6 +106,17 @@ func main() {
 		if err != nil {
 			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
 			return
+		}
+		if os.Getenv("DEBUG") == "true" {
+			homedir, err := os.UserHomeDir()
+			if err == nil {
+				devices = append(devices, Device{
+					Name:  filepath.Join(homedir, "debug.iso"),
+					Model: "Write to debug ISO in home dir",
+					Bytes: 10000000000,
+					Size:  "10 TB",
+				})
+			}
 		}
 		jsonifiedDevices := make([]string, len(devices))
 		for index, device := range devices {
