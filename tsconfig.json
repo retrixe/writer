@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "jsxImportSource": "@emotion/react",
+    "jsx": "react-jsx",
+    "lib": [
+      "ES5",
+      "ES2015",
+      "ES2020.BigInt",
+      "DOM",
+    ],
+  },
+  "include": [
+    "ui/**/*",
+    "ui/index.d.ts"
+  ],
+}

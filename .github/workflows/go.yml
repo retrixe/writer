@@ -51,7 +51,7 @@ jobs:
       run: yarn build
 
     - name: Test
-      run: go test -v .
+      run: yarn lint && go test -v .
     
     - name: Upload Build Artifact (Linux/macOS)
       uses: actions/upload-artifact@v2.1.4

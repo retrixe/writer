@@ -1,8 +1,10 @@
-import React from 'react'
 import { css } from '@emotion/react'
-import PropTypes from 'prop-types'
 
-const Dialog = (props) => {
+const Dialog = (props: {
+  handleDismiss: () => void
+  message: string
+  error: boolean
+}): JSX.Element => {
   return (
     <div css={css`
     background-color: rgba(0, 0, 0, 0.4);
@@ -36,12 +38,6 @@ const Dialog = (props) => {
       </div>
     </div>
   )
-}
-
-Dialog.propTypes = {
-  handleDismiss: PropTypes.func.isRequired,
-  message: PropTypes.string.isRequired,
-  error: PropTypes.bool.isRequired
 }
 
 export default Dialog
