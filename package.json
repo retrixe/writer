@@ -33,7 +33,7 @@
     "build:launcher": "go build -tags launcher -ldflags=\"-s -w\" -o launcher.exe -v launcher_windows.go",
     "build:js": "parcel build ui/index.tsx"
   },
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@3.2.4",
   "dependencies": {
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",

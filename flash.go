@@ -70,8 +70,8 @@ func FlashFileToBlockDevice(iff string, of string) {
 	fileStat, err := file.Stat()
 	if err != nil {
 		log.Fatalln("An error occurred while opening the file.", err)
-	} else if !fileStat.Mode().IsRegular() {
-		log.Fatalln("The specified file is not a regular file!")
+	} else if fileStat.Mode().IsDir() {
+		log.Fatalln("The specified source file is a folder!")
 	}
 	dest, err := os.OpenFile(destPath, os.O_WRONLY, os.ModePerm) // os.O_RDWR|os.O_EXCL|os.O_CREATE
 	if err != nil {
@@ -91,9 +91,9 @@ func FlashFileToBlockDevice(iff string, of string) {
 	timer := time.NewTimer(time.Second)
 	startTime := time.Now().UnixMilli()
 	var total int
+	buf := make([]byte, bs)
 	for {
-		data := make([]byte, bs)
-		n1, err := file.Read(data)
+		n1, err := file.Read(buf)
 		if err != nil {
 			if io.EOF == err {
 				break
@@ -101,7 +101,7 @@ func FlashFileToBlockDevice(iff string, of string) {
 				log.Fatalln("Encountered error while reading file!", err)
 			}
 		}
-		n2, err := dest.Write(data[0:n1])
+		n2, err := dest.Write(buf[:n1])
 		if err != nil {
 			log.Fatalln("Encountered error while writing to dest!", err)
 		} else if n2 != n1 {
@@ -119,6 +119,7 @@ func FlashFileToBlockDevice(iff string, of string) {
 			timer.Reset(time.Second)
 		}
 	}
+	// t, _ := io.CopyBuffer(dest, file, buf); total = int(t)
 	err = dest.Sync()
 	if err != nil {
 		log.Fatalln("Failed to sync writes to disk!", err)
