@@ -1,28 +1,24 @@
 module.exports = {
+  root: true,
   env: {
-    es6: true,
+    es2024: true,
     browser: true
   },
   extends: [
     'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
     'standard-with-typescript',
     'standard-react',
-    'standard-jsx'
+    'standard-jsx',
+    'plugin:prettier/recommended',
   ],
-  plugins: ['react', 'react-hooks', '@typescript-eslint'],
-  overrides: [{
-    files: ['*.ts', '*.tsx'],
-    parser: '@typescript-eslint/parser',
-    parserOptions: { project: './tsconfig.json' }
-  }],
-  ignorePatterns: ['.eslintrc.js', 'dist', '.yarn/*', '.pnp.*'],
-  parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module',
-    ecmaFeatures: { jsx: true }
-  },
+  ignorePatterns: ['.eslintrc.js', 'dist'],
+  overrides: [{ files: ['*.ts', '*.tsx'] }],
+  parser: '@typescript-eslint/parser',
+  parserOptions: { project: './tsconfig.json' },
   rules: {
-    'react/react-in-jsx-scope': 'off'
+    'react/react-in-jsx-scope': 'off',
+    'react/no-unknown-property': ['error', { ignore: ['css'] }],
+    // Make TypeScript ESLint less strict.
+    '@typescript-eslint/no-confusing-void-expression': 'off',
   }
 }

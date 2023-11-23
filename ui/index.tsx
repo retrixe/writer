@@ -4,7 +4,8 @@ import { css } from '@emotion/react'
 import JSBI from 'jsbi'
 import Dialog from './dialog'
 
-declare global { /* eslint-disable no-var */
+declare global {
+  /* eslint-disable no-var */
   // Flash and cancel flash.
   var flash: (filePath: string, devicePath: string) => void
   var cancelFlash: () => void
@@ -47,7 +48,8 @@ const App = (): JSX.Element => {
   const inProgress = typeof progress === 'number'
   useEffect(() => setConfirm(false), [inProgress])
   const onFlashButtonClick = (): void => {
-    if (inProgress) { // TODO: A dialog would be better.
+    if (inProgress) {
+      // TODO: A dialog would be better.
       if (confirm) {
         setConfirm(false)
         globalThis.cancelFlash()
@@ -64,8 +66,8 @@ const App = (): JSX.Element => {
     setConfirm(false)
     globalThis.flash(file, selectedDevice.split(' ')[1])
   }
-  const onFileInputChange: React.ChangeEventHandler<HTMLTextAreaElement> =
-    (event) => setFile(event.target.value.replace(/\n/g, ''))
+  const onFileInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = event =>
+    setFile(event.target.value.replace(/\n/g, ''))
 
   const progressPercent = inProgress
     ? JSBI.divide(JSBI.multiply(JSBI.BigInt(progress), JSBI.BigInt(100)), JSBI.BigInt(fileSize))
@@ -79,34 +81,78 @@ const App = (): JSX.Element => {
           error={dialog.startsWith('Error: ')}
         />
       )}
-      <div css={css`padding: 8;`}>
+      <div
+        css={css`
+          padding: 8;
+        `}
+      >
         <span>Step 1: Enter the path to the file.</span>
-        <div css={css`display: flex; padding-bottom: 0.4em;`}>
-          <textarea css={css`width: 100%;`} value={file} onChange={onFileInputChange} />
+        <div
+          css={css`
+            display: flex;
+            padding-bottom: 0.4em;
+          `}
+        >
+          <textarea
+            css={css`
+              width: 100%;
+            `}
+            value={file}
+            onChange={onFileInputChange}
+          />
           <button onClick={() => globalThis.promptForFile()}>Select ISO</button>
         </div>
         <span>Step 2: Select the device to flash the ISO to.</span>
-        <div css={css`display: flex; padding-bottom: 0.4em; padding-top: 0.4em;`}>
+        <div
+          css={css`
+            display: flex;
+            padding-bottom: 0.4em;
+            padding-top: 0.4em;
+          `}
+        >
           <select
-            css={css`width: 100%`}
+            css={css`
+              width: 100%;
+            `}
             value={selectedDevice}
             onChange={e => setSelectedDevice(e.target.value)}
           >
             {devices.map(device => (
-              <option key={device} value={device}>{device.substr(device.indexOf(' ') + 1)}</option>
+              <option key={device} value={device}>
+                {device.substr(device.indexOf(' ') + 1)}
+              </option>
             ))}
           </select>
-          <button onClick={() => globalThis.refreshDevices()} css={css`min-width: 69px;`}>
+          <button
+            onClick={() => globalThis.refreshDevices()}
+            css={css`
+              min-width: 69px;
+            `}
+          >
             Refresh
           </button>
         </div>
         <span>Step 3: Click the button below to begin flashing.</span>
-        <div css={css`display: flex; align-items: center; padding-top: 0.4em;`}>
+        <div
+          css={css`
+            display: flex;
+            align-items: center;
+            padding-top: 0.4em;
+          `}
+        >
           <button onClick={onFlashButtonClick}>
-            {confirm ? 'Confirm?' : (inProgress ? 'Cancel' : 'Flash')}
+            {confirm ? 'Confirm?' : inProgress ? 'Cancel' : 'Flash'}
           </button>
-          <div css={css`width: 5;`} />
-          {inProgress && <span>Progress: {progressPercent.toString()}% | Speed: {speed}</span>}
+          <div
+            css={css`
+              width: 5;
+            `}
+          />
+          {inProgress && (
+            <span>
+              Progress: {progressPercent.toString()}% | Speed: {speed}
+            </span>
+          )}
           {typeof progress === 'string' && <span>{progress}</span>}
         </div>
       </div>
