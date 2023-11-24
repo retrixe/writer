@@ -15,7 +15,7 @@ import (
 
 	"github.com/retrixe/writer/utils"
 	"github.com/sqweek/dialog"
-	"github.com/webview/webview"
+	webview "github.com/webview/webview_go"
 )
 
 // TODO: Design UI (with live warnings/errors).

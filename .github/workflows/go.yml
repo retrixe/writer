@@ -31,12 +31,6 @@ jobs:
         go-version: ^1.21
       id: go
 
-    - name: Download DLLs for Windows
-      run: >
-        C:\msys64\usr\bin\wget.exe https://github.com/webview/webview_csharp/raw/master/libs/webview.dll
-        https://github.com/webview/webview_csharp/raw/master/libs/WebView2Loader.dll
-      if: ${{ success() && matrix.os == 'windows-latest' }}
-
     - name: Install dependencies on Ubuntu
       run: |
         sudo apt-get update
@@ -58,8 +52,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: writer-${{ runner.os }}
-        path: |
-          writer*
-          launcher.exe
-          webview.dll
-          WebView2Loader.dll
+        path: writer*

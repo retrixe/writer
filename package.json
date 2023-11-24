@@ -24,13 +24,10 @@
     "lint": "eslint . && tsc --noEmit",
     "dev": "parcel renderer/index.html & go run -ldflags=\"-s -w -X main.overrideUrl=http://localhost:1234/\" . & echo Starting...",
     "start": "parcel build renderer/index.tsx && go run .",
-    "build": "run-script-os",
-    "build:default": "parcel build renderer/index.tsx --no-source-maps && yarn build:go",
-    "build:windows": "yarn build:default && yarn build:launcher",
+    "build": "parcel build renderer/index.tsx --no-source-maps && yarn build:go",
     "build:go": "run-script-os",
     "build:go:default": "go build -ldflags=\"-s -w\" -o writer -v",
-    "build:go:windows": "go build -ldflags=\"-s -w -H windowsgui\" -o writer.exe -v",
-    "build:launcher": "go build -tags launcher -ldflags=\"-s -w\" -o launcher.exe -v launcher_windows.go"
+    "build:go:windows": "go build -ldflags=\"-s -w -H windowsgui\" -o writer.exe -v"
   },
   "packageManager": "yarn@4.0.2",
   "dependencies": {
