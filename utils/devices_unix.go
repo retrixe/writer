@@ -1,6 +1,6 @@
 //go:build !darwin && !windows
 
-package main
+package utils
 
 import (
 	"io/fs"
