@@ -15,7 +15,7 @@ import (
 )
 
 // ErrNotBlockDevice is returned when the specified device is not a block device.
-var ErrNotBlockDevice = errors.New("provided device is not a block device!")
+var ErrNotBlockDevice = errors.New("specified device is not a block device")
 
 // RunDd is a wrapper around the `dd` command. This wrapper behaves
 // identically to dd, but accepts stdin input "stop\n".
