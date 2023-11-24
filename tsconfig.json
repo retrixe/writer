@@ -1,19 +1,7 @@
 {
+  "extends": "@tsconfig/vite-react",
   "compilerOptions": {
-    "strict": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "jsxImportSource": "@emotion/react",
-    "jsx": "react-jsx",
-    "lib": [
-      "ES5",
-      "ES2015",
-      "ES2020.BigInt",
-      "DOM",
-    ],
+    "jsxImportSource": "@emotion/react"
   },
-  "include": [
-    "ui/**/*",
-    "ui/index.d.ts"
-  ],
+  "include": ["renderer/**/*", "renderer/index.d.ts"]
 }

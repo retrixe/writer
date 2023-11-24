@@ -2256,6 +2256,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tsconfig/vite-react@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@tsconfig/vite-react@npm:2.0.1"
+  checksum: 5715563bf293484c8b5ad36a0328159b11de9bde507b96dcde1d72243d02dcd8eb0383c1676e319cfb03e8f79d96891103d480c7157177f4d7a0b368ede4a46d
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:^7.0.12":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
@@ -6824,6 +6831,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@mui/material": "npm:^5.14.18"
     "@swc/helpers": "npm:^0.5.3"
+    "@tsconfig/vite-react": "npm:^2.0.1"
     "@types/react": "npm:^18.2.38"
     "@types/react-dom": "npm:^18.2.17"
     "@typescript-eslint/eslint-plugin": "npm:^6.12.0"

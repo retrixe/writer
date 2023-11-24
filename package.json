@@ -31,7 +31,7 @@
     "build:go:default": "go build -ldflags=\"-s -w\" -o writer -v",
     "build:go:windows": "go build -ldflags=\"-s -w -H windowsgui\" -o writer.exe -v",
     "build:launcher": "go build -tags launcher -ldflags=\"-s -w\" -o launcher.exe -v launcher_windows.go",
-    "build:js": "parcel build ui/index.tsx"
+    "build:js": "parcel build renderer/index.tsx"
   },
   "packageManager": "yarn@4.0.2",
   "dependencies": {
@@ -46,6 +46,7 @@
   "devDependencies": {
     "@babel/core": "^7.23.3",
     "@emotion/babel-plugin": "^11.11.0",
+    "@tsconfig/vite-react": "^2.0.1",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.12.0",

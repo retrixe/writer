@@ -44,6 +44,7 @@ jobs:
 
     - name: Get dependencies
       run: |
+        corepack enable
         yarn install --immutable
         go get -v -t -d ./...
 

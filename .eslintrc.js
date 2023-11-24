@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   env: {
     es2024: true,
-    browser: true
+    browser: true,
   },
   extends: [
     'plugin:react/recommended',
@@ -20,5 +20,5 @@ module.exports = {
     'react/no-unknown-property': ['error', { ignore: ['css'] }],
     // Make TypeScript ESLint less strict.
     '@typescript-eslint/no-confusing-void-expression': 'off',
-  }
+  },
 }
