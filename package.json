@@ -1,7 +1,7 @@
 {
   "name": "writer",
   "version": "1.0.0-alpha.2",
-  "description": "The HTML/CSS/JS component of writer.",
+  "description": "An small, intuitive app to flash ISOs and disk images to external drives e.g. USB drives.",
   "repository": "https://github.com/retrixe/writer.git",
   "author": "retrixe",
   "license": "Apache-2.0",
@@ -22,16 +22,15 @@
   },
   "scripts": {
     "lint": "eslint . && tsc --noEmit",
-    "start": "yarn build:js --no-scope-hoist --no-optimize && yarn start:go",
-    "start:go": "go run .",
+    "dev": "parcel renderer/index.html & go run -ldflags=\"-s -w -X main.overrideUrl=http://localhost:1234/\" . & echo Starting...",
+    "start": "parcel build renderer/index.tsx && go run .",
     "build": "run-script-os",
-    "build:default": "yarn build:js --no-source-maps && yarn build:go",
+    "build:default": "parcel build renderer/index.tsx --no-source-maps && yarn build:go",
     "build:windows": "yarn build:default && yarn build:launcher",
     "build:go": "run-script-os",
     "build:go:default": "go build -ldflags=\"-s -w\" -o writer -v",
     "build:go:windows": "go build -ldflags=\"-s -w -H windowsgui\" -o writer.exe -v",
-    "build:launcher": "go build -tags launcher -ldflags=\"-s -w\" -o launcher.exe -v launcher_windows.go",
-    "build:js": "parcel build renderer/index.tsx"
+    "build:launcher": "go build -tags launcher -ldflags=\"-s -w\" -o launcher.exe -v launcher_windows.go"
   },
   "packageManager": "yarn@4.0.2",
   "dependencies": {
