@@ -3,28 +3,6 @@ import { css } from '@emotion/react'
 import JSBI from 'jsbi'
 import Dialog from './Dialog'
 
-declare global {
-  /* eslint-disable no-var */
-  // Flash and cancel flash.
-  var flash: (filePath: string, devicePath: string) => void
-  var cancelFlash: () => void
-  // UI update prompts.
-  var promptForFile: () => void
-  var refreshDevices: () => void
-  // Export React state to the global scope.
-  var setFileReact: (file: string) => void
-  var setSpeedReact: (speed: string) => void
-  var setDialogReact: (dialog: string) => void
-  var setDevicesReact: (devices: string[]) => void
-  var setFileSizeReact: (fileSize: number) => void
-  var setProgressReact: (progress: number | string | null) => void
-  var setSelectedDeviceReact: (selectedDevice: string) => void
-} /* eslint-enable no-var */
-
-// const floor = (num: number) => Math.floor(num * 100) / 100
-// const varToString = varObj => Object.keys(varObj)[0]; const s = (setObj, value) => {
-// const name = varToString(setObj); setObj[name](value); window[name + 'Go'](value)}
-
 const App = (): JSX.Element => {
   const [file, setFile] = useState('')
   const [speed, setSpeed] = useState('')
@@ -34,8 +12,6 @@ const App = (): JSX.Element => {
   const [fileSize, setFileSize] = useState(0)
   const [progress, setProgress] = useState<number | string | null>(null)
   const [selectedDevice, setSelectedDevice] = useState('N/A')
-  // useEffect(() => globalThis.setFileGo(file), [file])
-  useEffect(() => globalThis.refreshDevices(), [])
   globalThis.setFileReact = setFile
   globalThis.setSpeedReact = setSpeed
   globalThis.setDialogReact = setDialog
@@ -43,6 +19,7 @@ const App = (): JSX.Element => {
   globalThis.setProgressReact = setProgress
   globalThis.setFileSizeReact = setFileSize
   globalThis.setSelectedDeviceReact = setSelectedDevice
+  useEffect(() => globalThis.refreshDevices(), [])
 
   const inProgress = typeof progress === 'number'
   useEffect(() => setConfirm(false), [inProgress])

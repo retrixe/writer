@@ -73,7 +73,7 @@ func FlashFileToBlockDevice(iff string, of string) {
 	} else if fileStat.Mode().IsDir() {
 		log.Fatalln("The specified source file is a folder!")
 	}
-	dest, err := os.OpenFile(destPath, os.O_WRONLY, os.ModePerm) // os.O_RDWR|os.O_EXCL|os.O_CREATE
+	dest, err := os.OpenFile(destPath, os.O_WRONLY|os.O_EXCL, os.ModePerm)
 	if err != nil {
 		log.Fatalln("An error occurred while opening the dest.", err)
 	}
