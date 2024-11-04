@@ -3,8 +3,8 @@ module github.com/retrixe/writer
 go 1.19
 
 require (
-	github.com/sqweek/dialog v0.0.0-20200911184034-8a3d98e8211d
-	github.com/webview/webview_go v0.0.0-20230901181450-5a14030a9070
+	github.com/sqweek/dialog v0.0.0-20240226140203-065105509627
+	github.com/webview/webview_go v0.0.0-20240831120633-6173450d4dd6
 )
 
-require github.com/TheTitanrain/w32 v0.0.0-20180517000239-4f5cfb03fabf // indirect
+require github.com/TheTitanrain/w32 v0.0.0-20200114052255-2654d97dbd3d // indirect

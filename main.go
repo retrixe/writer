@@ -13,7 +13,7 @@ import (
 
 	_ "embed"
 
-	"github.com/retrixe/writer/utils"
+	"github.com/retrixe/writer/app"
 	"github.com/sqweek/dialog"
 	webview "github.com/webview/webview_go"
 )
@@ -54,16 +54,16 @@ func main() {
 			println("Invalid usage: writer flash <file> <destination> (--use-system-dd)")
 			os.Exit(1)
 		}
-		if err := utils.UnmountDevice(os.Args[3]); err != nil {
+		if err := app.UnmountDevice(os.Args[3]); err != nil {
 			log.Println(err)
 			if !strings.HasSuffix(os.Args[3], "debug.iso") {
 				os.Exit(1)
 			}
 		}
 		if len(os.Args) > 4 && os.Args[4] == "--use-system-dd" {
-			utils.RunDd(os.Args[2], os.Args[3])
+			app.RunDd(os.Args[2], os.Args[3])
 		} else {
-			utils.FlashFileToBlockDevice(os.Args[2], os.Args[3])
+			app.FlashFileToBlockDevice(os.Args[2], os.Args[3])
 		}
 		return
 	}
@@ -84,7 +84,7 @@ func main() {
 
 	// Bind a function to request refresh of devices attached.
 	w.Bind("refreshDevices", func() {
-		devices, err := utils.GetDevices()
+		devices, err := app.GetDevices()
 		if err != nil {
 			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
 			return
@@ -92,7 +92,7 @@ func main() {
 		if os.Getenv("DEBUG") == "true" {
 			homedir, err := os.UserHomeDir()
 			if err == nil {
-				devices = append(devices, utils.Device{
+				devices = append(devices, app.Device{
 					Name:  filepath.Join(homedir, "debug.iso"),
 					Model: "Write to debug ISO in home dir",
 					Bytes: 10000000000,
@@ -155,7 +155,7 @@ func main() {
 		} else {
 			w.Eval("setFileSizeReact(" + strconv.Itoa(int(stat.Size())) + ")")
 		}
-		channel, stdin, err := utils.CopyConvert(file, selectedDevice)
+		channel, stdin, err := app.CopyConvert(file, selectedDevice)
 		inputPipe = stdin
 		if err != nil {
 			w.Eval("setDialogReact(" + ParseToJsString("Error: "+err.Error()) + ")")
