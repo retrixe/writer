@@ -62,13 +62,17 @@ func GetDevices() ([]Device, error) {
 
 // UnmountDevice unmounts a block device's partitons before flashing to it.
 func UnmountDevice(device string) error {
-	// Check if device is mounted.
+	// Check if device exists.
 	stat, err := os.Stat(device)
 	if err != nil {
 		return err
 	} else if stat.Mode().Type()&fs.ModeDevice == 0 {
 		return ErrNotBlockDevice
 	}
-	// FIXME: Discover device partitions and recursively unmount them.
+	// Unmount all partitions of disk using `diskutil`.
+	_, err = exec.Command("diskutil", "unmountDisk", device).Output()
+	if err != nil {
+		return err
+	}
 	return nil
 }

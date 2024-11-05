@@ -71,6 +71,20 @@ func UnmountDevice(device string) error {
 	} else if stat.Mode().Type()&fs.ModeDevice == 0 {
 		return ErrNotBlockDevice
 	}
-	// FIXME: Discover device partitions and recursively unmount them.
+	// Discover mounted device partitions.
+	mounts, err := exec.Command("mount").Output()
+	if err != nil {
+		return err
+	}
+	// Unmount device partitions.
+	for _, mount := range strings.Split(string(mounts), "\n") {
+		if strings.HasPrefix(mount, device) {
+			partition := strings.Fields(mount)[0]
+			err = exec.Command("umount", partition).Run()
+			if err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }
