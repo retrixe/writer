@@ -30,17 +30,22 @@ var w webview.WebView
 var html string
 var overrideUrl = ""
 
+//go:embed dist/index.css
+var css string
+
 //go:embed dist/index.js
 var js string
 
-// ParseToJsString takes a string and escapes slashes and double-quotes,
-// and converts it to a string that can be passed to JavaScript.
+// ParseToJsString takes a string, escapes slashes and double-quotes, adds newlines for multi-line
+// strings and wraps it in double-quotes, allowing it to be passed to JavaScript.
 func ParseToJsString(s string) string {
-	return "\"" + strings.ReplaceAll(strings.ReplaceAll(s, "\\", "\\\\"), "\"", "\\\"") + "\""
+	split := strings.Split(s, "\n")
+	result := `"` + strings.ReplaceAll(strings.ReplaceAll(split[0], `\`, `\\`), `"`, `\"`) + `"`
+	for _, line := range split[1:] {
+		result += ` + "\n` + strings.ReplaceAll(strings.ReplaceAll(line, `\`, `\\`), `"`, `\"`) + `"`
+	}
+	return result
 }
-
-// SetFile sets the value of the file variable in both Go and React.
-// func SetFile(value string) {file = value;w.Eval("setFileReact(" + ParseToJsString(value) + ")")}
 
 func main() {
 	if len(os.Args) >= 2 && (os.Args[1] == "-v" || os.Args[1] == "--version") {
@@ -76,11 +81,14 @@ func main() {
 	w.SetSize(420, 210, webview.HintNone)
 	w.SetTitle("Imprint " + version)
 
-	// Bind variables.
-	// w.Bind("setFileGo", func(newFile string) {file = newFile})
-
-	// Bind a function to initiate React via webview.Eval.
-	w.Bind("initiateReact", func() { w.Eval(js) })
+	// Bind a function to inject JavaScript and CSS via webview.Eval.
+	w.Bind("initiate", func() {
+		w.Eval(`// inject <style> tag
+const style = document.createElement('style')
+style.textContent = ` + ParseToJsString(css) + `
+document.head.appendChild(style)`)
+		w.Eval(js)
+	})
 
 	// Bind a function to request refresh of devices attached.
 	w.Bind("refreshDevices", func() {
@@ -210,7 +218,7 @@ func main() {
 		w.Navigate(overrideUrl)
 	} else {
 		w.Navigate("data:text/html," + strings.ReplaceAll(html,
-			"<script type=\"module\" src=\"./index.tsx\" />", "<script>initiateReact()</script>"))
+			"<script type=\"module\" src=\"./index.tsx\" />", "<script>initiate()</script>"))
 	}
 	w.Run()
 }

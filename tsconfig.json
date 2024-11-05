@@ -1,7 +1,4 @@
 {
   "extends": "@tsconfig/vite-react",
-  "compilerOptions": {
-    "jsxImportSource": "@emotion/react"
-  },
-  "include": ["renderer/**/*", "renderer/index.d.ts"]
+  "include": ["renderer/**/*", "renderer/global.d.ts"]
 }

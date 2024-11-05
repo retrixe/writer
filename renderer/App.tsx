@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { css } from '@emotion/react'
 import JSBI from 'jsbi'
 import Dialog from './Dialog'
+import * as styles from './App.module.scss'
 
 const App = (): JSX.Element => {
   const [file, setFile] = useState('')
@@ -57,39 +57,16 @@ const App = (): JSX.Element => {
           error={dialog.startsWith('Error: ')}
         />
       )}
-      <div
-        css={css`
-          padding: 8;
-        `}
-      >
+      <div className={styles.container}>
         <span>Step 1: Enter the path to the file.</span>
-        <div
-          css={css`
-            display: flex;
-            padding-bottom: 0.4em;
-          `}
-        >
-          <textarea
-            css={css`
-              width: 100%;
-            `}
-            value={file}
-            onChange={onFileInputChange}
-          />
+        <div className={styles['select-image-container']}>
+          <textarea className={styles['full-width']} value={file} onChange={onFileInputChange} />
           <button onClick={() => globalThis.promptForFile()}>Select ISO</button>
         </div>
         <span>Step 2: Select the device to flash the ISO to.</span>
-        <div
-          css={css`
-            display: flex;
-            padding-bottom: 0.4em;
-            padding-top: 0.4em;
-          `}
-        >
+        <div className={styles['select-device-container']}>
           <select
-            css={css`
-              width: 100%;
-            `}
+            className={styles['full-width']}
             value={selectedDevice}
             onChange={e => setSelectedDevice(e.target.value)}
           >
@@ -99,31 +76,16 @@ const App = (): JSX.Element => {
               </option>
             ))}
           </select>
-          <button
-            onClick={() => globalThis.refreshDevices()}
-            css={css`
-              min-width: 69px;
-            `}
-          >
+          <button onClick={() => globalThis.refreshDevices()} className={styles['refresh-button']}>
             Refresh
           </button>
         </div>
         <span>Step 3: Click the button below to begin flashing.</span>
-        <div
-          css={css`
-            display: flex;
-            align-items: center;
-            padding-top: 0.4em;
-          `}
-        >
+        <div className={styles['flash-progress-container']}>
           <button onClick={onFlashButtonClick}>
             {confirm ? 'Confirm?' : inProgress ? 'Cancel' : 'Flash'}
           </button>
-          <div
-            css={css`
-              width: 5;
-            `}
-          />
+          <div className={styles.spacer} />
           {inProgress && (
             <span>
               Progress: {progressPercent.toString()}% | Speed: {speed}

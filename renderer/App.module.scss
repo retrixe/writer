@@ -1,0 +1,32 @@
+.container {
+  padding: 8px;
+}
+
+.select-image-container {
+  display: flex;
+  padding-bottom: 0.4em;
+}
+
+.select-device-container {
+  display: flex;
+  padding-bottom: 0.4em;
+  padding-top: 0.4em;
+}
+
+.flash-progress-container {
+  display: flex;
+  align-items: center;
+  padding-top: 0.4em;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.refresh-button {
+  min-width: 69px;
+}
+
+.spacer {
+  width: 5px;
+}
