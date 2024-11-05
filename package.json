@@ -6,20 +6,6 @@
   "author": "retrixe",
   "license": "Apache-2.0",
   "private": true,
-  "engines": {
-    "browsers": "ie >= 9"
-  },
-  "output": "dist/index.js",
-  "targets": {
-    "output": {
-      "context": "browser",
-      "outputFormat": "global",
-      "sourceMap": {
-        "inline": true,
-        "inlineSources": true
-      }
-    }
-  },
   "scripts": {
     "lint": "eslint . && tsc --noEmit",
     "dev": "parcel renderer/index.html & go run -ldflags=\"-s -w -X main.overrideUrl=http://localhost:1234/\" . & echo Starting...",
@@ -64,5 +50,27 @@
     "process": "^0.11.10",
     "run-script-os": "^1.1.6",
     "typescript": "^5.6.3"
+  },
+  "engines": {
+    "browsers": "ie >= 9"
+  },
+  "output": "dist/index.js",
+  "targets": {
+    "output": {
+      "context": "browser",
+      "outputFormat": "global",
+      "sourceMap": {
+        "inline": true,
+        "inlineSources": true
+      }
+    }
+  },
+  "prettier": {
+    "printWidth": 100,
+    "arrowParens": "avoid",
+    "singleQuote": true,
+    "jsxSingleQuote": true,
+    "semi": false,
+    "endOfLine": "auto"
   }
 }

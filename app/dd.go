@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -84,10 +83,7 @@ func FlashFileToBlockDevice(iff string, of string) {
 	} else if destStat.Mode().IsDir() {
 		log.Fatalln("The specified destination is a directory!")
 	}
-	bs := 4096
-	if runtime.GOOS == "windows" {
-		bs = 512 // TODO: Is this true?
-	}
+	bs := 4 * 1024 * 1024 // TODO: Allow configurability?
 	timer := time.NewTimer(time.Second)
 	startTime := time.Now().UnixMilli()
 	var total int

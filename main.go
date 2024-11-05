@@ -18,9 +18,9 @@ import (
 	webview "github.com/webview/webview_go"
 )
 
-// TODO: Design UI (with live warnings/errors).
-// TODO: Validate written image.
-// LOW-TODO: Future support for flashing to an internal drive?
+// FIXME: Design UI (with live warnings/errors).
+// FIXME: Validate written image.
+// TODO: Future support for flashing to an internal drive?
 
 const version = "1.0.0-alpha.2"
 

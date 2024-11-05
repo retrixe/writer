@@ -25,7 +25,7 @@ const App = (): JSX.Element => {
   useEffect(() => setConfirm(false), [inProgress])
   const onFlashButtonClick = (): void => {
     if (inProgress) {
-      // TODO: A dialog would be better.
+      // FIXME: A dialog would be better.
       if (confirm) {
         setConfirm(false)
         globalThis.cancelFlash()

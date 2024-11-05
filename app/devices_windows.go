@@ -68,6 +68,6 @@ func UnmountDevice(device string) error {
 	} else if stat.Mode().Type()&fs.ModeDevice == 0 {
 		return ErrNotBlockDevice
 	}
-	// TODO: Discover device partitions and recursively unmount them.
+	// FIXME: Discover device partitions and recursively unmount them.
 	return nil
 }

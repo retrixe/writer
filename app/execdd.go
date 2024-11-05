@@ -93,7 +93,7 @@ func CopyConvert(iff string, of string) (chan DdProgress, io.WriteCloser, error)
 			lastLine = text
 			firstSpace := strings.Index(text, " ")
 			if firstSpace != -1 && strings.HasPrefix(text[firstSpace+1:], "bytes (") {
-				// LOW-TODO: Probably handle error, but we can't tell full dd behavior without seeing the code.
+				// TODO: Probably handle error, but we can't tell full dd behavior without seeing the code.
 				// Well, custom dd is the default now anyways.
 				bytes, _ := strconv.Atoi(text[:firstSpace])
 				split := strings.Split(text, ", ")
