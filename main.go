@@ -13,7 +13,7 @@ import (
 
 	_ "embed"
 
-	"github.com/retrixe/writer/app"
+	"github.com/retrixe/imprint/app"
 	"github.com/sqweek/dialog"
 	webview "github.com/webview/webview_go"
 )
@@ -44,14 +44,14 @@ func ParseToJsString(s string) string {
 
 func main() {
 	if len(os.Args) >= 2 && (os.Args[1] == "-v" || os.Args[1] == "--version") {
-		println("writer version v" + version)
+		println("imprint version v" + version)
 		return
 	} else if len(os.Args) >= 2 && os.Args[1] == "flash" {
 		log.SetFlags(0)
 		log.SetOutput(os.Stderr)
 		log.SetPrefix("[flash] ")
 		if len(os.Args) < 4 {
-			println("Invalid usage: writer flash <file> <destination> (--use-system-dd)")
+			println("Invalid usage: imprint flash <file> <destination> (--use-system-dd)")
 			os.Exit(1)
 		}
 		if err := app.UnmountDevice(os.Args[3]); err != nil {
@@ -74,7 +74,7 @@ func main() {
 	w = webview.New(debug)
 	defer w.Destroy()
 	w.SetSize(420, 210, webview.HintNone)
-	w.SetTitle("Writer " + version)
+	w.SetTitle("Imprint " + version)
 
 	// Bind variables.
 	// w.Bind("setFileGo", func(newFile string) {file = newFile})

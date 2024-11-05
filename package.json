@@ -1,8 +1,8 @@
 {
-  "name": "writer",
+  "name": "imprint",
   "version": "1.0.0-alpha.2",
   "description": "An small, intuitive app to flash ISOs and disk images to external drives e.g. USB drives.",
-  "repository": "https://github.com/retrixe/writer.git",
+  "repository": "https://github.com/retrixe/imprint.git",
   "author": "retrixe",
   "license": "Apache-2.0",
   "private": true,
@@ -12,8 +12,8 @@
     "start": "parcel build renderer/index.tsx && go run .",
     "build": "parcel build renderer/index.tsx --no-source-maps && yarn build:go",
     "build:go": "run-script-os",
-    "build:go:default": "go build -ldflags=\"-s -w\" -o writer -v",
-    "build:go:windows": "go build -ldflags=\"-s -w -H windowsgui\" -o writer.exe -v"
+    "build:go:default": "go build -ldflags=\"-s -w\" -o imprint -v",
+    "build:go:windows": "go build -ldflags=\"-s -w -H windowsgui\" -o imprint.exe -v"
   },
   "packageManager": "yarn@4.5.1",
   "dependencies": {

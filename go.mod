@@ -1,4 +1,4 @@
-module github.com/retrixe/writer
+module github.com/retrixe/imprint
 
 go 1.19
 
